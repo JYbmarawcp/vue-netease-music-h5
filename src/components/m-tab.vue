@@ -18,10 +18,30 @@
 
 <script>
 export default {
-
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.m-tab {
+  display: flex;
+  height: 40px;
+  line-height: 40px;
+  font-size: $font-size;
+  border-bottom: 1px solid #cccccc;
+  .tab-item {
+    flex: 1;
+    text-align: center;
+    .tab-link {
+      padding: 0 5px 10px ;
+      color: $font-color;
+    }
 
+    &.router-link-active {
+      .tab-link {
+        color: $theme-color;
+        border-bottom: 2px solid $theme-color;
+      }
+    }
+  }
+}
 </style>

@@ -2,6 +2,9 @@
   <div id="app">
     <MHeader />
     <MTab />
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 
@@ -16,11 +19,4 @@ export default {
 }
 </script>
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-}
-
-#nav {
-  padding: 30px;
-}
 </style>
