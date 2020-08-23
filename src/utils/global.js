@@ -1,9 +1,9 @@
 import VueLazyload from 'vue-lazyload'
 
 import { EMPTY_IMG } from "./dom"
-
+import * as utils from "./index"
 export default {
-  install(Vue) {
+  install (Vue) {
     const requireComponent = require.context(
       "@/base",
       true,
@@ -17,7 +17,9 @@ export default {
         Vue.component(componentName, componentConfig.default || componentConfig)
       }
     })
-    
+
+    Vue.prototype.$utils = utils
+
     Vue.use(VueLazyload, {
       loading: EMPTY_IMG,
       error: EMPTY_IMG

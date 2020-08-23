@@ -1,23 +1,45 @@
 <template>
   <div class="recommend">
-    <h2>你的歌单精选站</h2>
+    <Slider v-if="banners.length">
+      <div class="slide-item" v-for="banner in banners" :key="banner.scm">
+        <img :src="banner.imageUrl" />
+      </div>
+    </Slider>
+    <h2>人气歌单推荐</h2>
+    
   </div>
 </template>
 
 <script>
-import { getPersonalized } from "@/api"
+import { getBanner } from '@/api'
+import { getPersonalized } from '@/api'
+
 export default {
   name: 'Recommend',
-  async created () {
+  async created() {
+    const { banners } = await getBanner()
     const { result } = await getPersonalized()
+    this.banners = banners
     this.list = result
   },
-  data () {
+  data() {
     return {
-      list: []
+      banners: [],
+      list: [],
     }
   },
-  components: {
-  }
+  components: {},
 }
 </script>
+
+<style lang="scss" scoped>
+.recommend {
+  .slide-item {
+    display: inline-block;
+    width: 100%;
+    img {
+      width: 100%;
+    }
+  }
+}
+</style>
