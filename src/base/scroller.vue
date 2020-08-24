@@ -1,12 +1,13 @@
 <template>
   <div class="scroller" ref="scroller">
-    <slot></slot>
+    <div class="scroll-content">
+      <slot></slot>
+    </div>
   </div>
 </template>
 
 <script>
 import BScroll from '@better-scroll/core'
-
 const defaultOptions = {
   scrollY: true,
   probeType: 3,
@@ -21,7 +22,7 @@ export default {
     data: {
       default: () => [],
     },
-    option: {
+    options: {
       type: Object,
       default: () => ({}),
     },
@@ -33,6 +34,14 @@ export default {
     refresh() {
       this.scroller.refresh()
     },
+    _registerHooks(hookNames, handler) {
+      hookNames.forEach((name) => {
+        this.scroller.on(name, handler)
+      })
+    }
+  },
+  beforeDestroy() {
+    this.scroller.destroy()
   },
   watch: {
     data: {
@@ -41,8 +50,11 @@ export default {
           if (!this.scroller) {
             this.scroller = new BScroll(
               this.$refs.scroller,
-              Object.assign({}, defaultOptions, this.option)
+              Object.assign({}, defaultOptions, this.options)
             )
+            this._registerHooks(['scroll', 'scrollEnd'], (pos) => {
+              console.log(pos)
+            })
             this.$emit('init', this.scroller)
           } else {
             this.scroller && this.scroller.refresh()
@@ -59,6 +71,11 @@ export default {
 .scroller {
   position: relative;
   overflow: hidden;
+  white-space: nowrap;
   height: 100%;
+
+  .scroll-content {
+    display: inline-block;
+  }
 }
 </style>

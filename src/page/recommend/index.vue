@@ -1,34 +1,38 @@
 <template>
   <div class="recommend">
-    <Slider v-if="banners.length">
+    <Slider
+      :options="{ slide: {loop: true,threshold: 100} }"
+      v-if="banners.length"
+    >
       <div class="slide-item" v-for="banner in banners" :key="banner.scm">
         <img :src="banner.imageUrl" />
       </div>
     </Slider>
-    <h2>人气歌单推荐</h2>
-    
+    <NewPlaylists />
+    <NewSongs />
   </div>
 </template>
 
 <script>
 import { getBanner } from '@/api'
-import { getPersonalized } from '@/api'
 
+import NewPlaylists from "./new-playlists"
+import NewSongs from "./new-songs"
 export default {
   name: 'Recommend',
   async created() {
     const { banners } = await getBanner()
-    const { result } = await getPersonalized()
     this.banners = banners
-    this.list = result
   },
   data() {
     return {
       banners: [],
-      list: [],
     }
   },
-  components: {},
+  components: {
+    NewPlaylists,
+    NewSongs,
+  },
 }
 </script>
 

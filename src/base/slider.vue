@@ -23,7 +23,15 @@ import BScroll from '@better-scroll/core'
 import Slide from '@better-scroll/slide'
 
 BScroll.use(Slide)
-
+const defaultOptions = {
+  scrollX: true,
+  scrollY: false,
+  useTransition: true,
+  momentum: false,
+  bounce: false,
+  stopPropagation: true,
+  probeType: 2
+}
 export default {
   name: "Slider",
   data() {
@@ -31,6 +39,16 @@ export default {
       slide: null,
       currentPageIndex: 0,
       playTimer: 0,
+    }
+  },
+  props: {
+    options: {
+      type: Object,
+      default: () => ({}),
+    },
+    autoPlay: {
+      type: Boolean,
+      default: true
     }
   },
   mounted() {
@@ -42,20 +60,12 @@ export default {
   },
   methods: {
     init() {
+      // console.log(this.option);
       clearTimeout(this.playTimer)
-      this.slide = new BScroll(this.$refs.slide, {
-        scrollX: true,
-        scrollY: false,
-        slide: {
-          loop: true,
-          threshold: 100
-        },
-        useTransition: true,
-        momentum: false,
-        bounce: false,
-        stopPropagation: true,
-        probeType: 2
-      })
+      this.slide = new BScroll(
+        this.$refs.slide, 
+        Object.assign({}, defaultOptions, this.options)
+      )
       this.slide.on('scrollEnd', this._onScrollEnd)
 
       // user touches the slide area
@@ -81,10 +91,12 @@ export default {
       this.autoGoNext()
     },
     autoGoNext() {
-      clearTimeout(this.playTimer)
-      this.playTimer = setTimeout(() => {
-        this.nextPage()
-      }, 4000)
+      if (this.autoPlay) {
+        clearTimeout(this.playTimer)
+        this.playTimer = setTimeout(() => {
+          this.nextPage()
+        }, 4000)
+      }
     },
   }
 }

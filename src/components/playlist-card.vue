@@ -1,20 +1,21 @@
 <template>
   <div class="playlist-card">
     <div class="img-wrap">
-      <img src="" alt="">
-      <div class="desc-wrap">
-        <span class="desc">{{ desc }}</span>
+      <img v-lazy="$utils.genImgUrl(img, 300)" >
+      <div class="playCount-wrap" v-if="playCount">
+        <Icon type="play" />
+        {{ $utils.formatNumber(playCount) }}
       </div>
     </div>
-    <p class="name">{{ name }}</p>
+    <div class="name">{{ name }}</div>
   </div>
 </template>
 
 <script>
 export default {
-  props: ["id", "img", "name", "desc"],
+  props: ["id", "img", "name", "playCount"],
   methods: {
-
+    
   }
 }
 </script>
@@ -22,6 +23,45 @@ export default {
 <style lang="scss" scoped>
 .playlist-card {
   position: relative;
-  width: 30%;
+  margin: 4px;
+
+  .img-wrap {
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+
+    img {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .playCount-wrap {
+      display: flex;
+      align-items: center;
+      position: absolute;
+      right: 4px;
+      top: 2px;
+      font-size: $font-size-sm;
+      color: $white;
+
+      i {
+        display: inline-block;
+      }
+    }
+  }
+
+  .name {
+    font-size: $font-size-sm;
+    white-space: normal;
+    @include text-ellipsis-multi(2);
+  }
 }
 </style>
