@@ -4,18 +4,20 @@
     <Slider v-if="list.length"
       :options="{ slide: {loop: false,threshold: 100}, bounce: true }"
       :autoPlay="false"
+      :showDoc="false"
     >
       <div
         v-for="(list, listIndex) in thunkedList"
         :key="listIndex"
         class="list"
       >
-        <SongCard 
+        <SongCard
           v-for="(item, index) in list"
           v-bind="nomalizeSong(item)"
           :key="item.id"
           class="song-card"
           @click.native="onClickSong(listIndex, index)"
+          @loadImg="onLoad"
         />
       </div>
     </Slider>
@@ -49,6 +51,9 @@ export default {
   methods: {
     onClickSong(listIndex, index) {
       console.log(listIndex*3 + index);
+    },
+    onLoad() {
+      this.$emit('loadImage')
     },
     nomalizeSong(song) {
       const {

@@ -6,7 +6,7 @@
           <slot></slot>
         </div>
       </div>
-      <div class="docs-wrapper">
+      <div class="docs-wrapper" v-if="showDoc">
         <span
           class="doc"
           v-for="(item, index) in 10"
@@ -47,6 +47,10 @@ export default {
       default: () => ({}),
     },
     autoPlay: {
+      type: Boolean,
+      default: true
+    },
+    showDoc: {
       type: Boolean,
       default: true
     }
@@ -102,7 +106,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .slide-banner {
   .banner-wrapper {
     position: relative;

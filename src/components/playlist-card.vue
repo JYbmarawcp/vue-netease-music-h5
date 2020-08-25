@@ -1,5 +1,5 @@
 <template>
-  <div class="playlist-card">
+  <div @click="onClickCard" class="playlist-card">
     <div class="img-wrap">
       <img v-lazy="$utils.genImgUrl(img, 300)" >
       <div class="playCount-wrap" v-if="playCount">
@@ -15,7 +15,9 @@
 export default {
   props: ["id", "img", "name", "playCount"],
   methods: {
-    
+    onClickCard() {
+      this.$router.push(`/recommend/playlist/${this.id}`)
+    }
   }
 }
 </script>

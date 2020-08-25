@@ -1,5 +1,5 @@
 <template>
-  <div class="scroller" ref="scroller">
+  <div class="scroll-wrapper" ref="scroll">
     <div class="scroll-content">
       <slot></slot>
     </div>
@@ -10,15 +10,12 @@
 import BScroll from '@better-scroll/core'
 const defaultOptions = {
   scrollY: true,
+  click: true,
   probeType: 3,
 }
 export default {
-  name: 'Scroller',
+  name: 'Scroll',
   props: {
-    click: {
-      type: Boolean,
-      default: false,
-    },
     data: {
       default: () => [],
     },
@@ -28,36 +25,37 @@ export default {
     },
   },
   methods: {
-    getScroller() {
-      return this.scroller
+    getScroll() {
+      return this.scroll
     },
     refresh() {
-      this.scroller.refresh()
+      this.scroll.refresh()
     },
     _registerHooks(hookNames, handler) {
       hookNames.forEach((name) => {
-        this.scroller.on(name, handler)
+        this.scroll.on(name, handler)
       })
-    }
+    },
+    clickHandler (item) {
+      alert(item)
+    },
   },
   beforeDestroy() {
-    this.scroller.destroy()
+    this.scroll.destroy()
   },
   watch: {
     data: {
       handler() {
         this.$nextTick(() => {
-          if (!this.scroller) {
-            this.scroller = new BScroll(
-              this.$refs.scroller,
+          if (!this.scroll) {
+            this.scroll = new BScroll(
+              this.$refs.scroll,
               Object.assign({}, defaultOptions, this.options)
             )
-            this._registerHooks(['scroll', 'scrollEnd'], (pos) => {
-              console.log(pos)
-            })
-            this.$emit('init', this.scroller)
+            this._registerHooks(['scroll', 'scrollEnd'])
+            this.$emit('init', this.scroll)
           } else {
-            this.scroller && this.scroller.refresh()
+            this.scroll && this.scroll.refresh()
           }
         })
       },
@@ -67,15 +65,9 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.scroller {
-  position: relative;
+<style lang="scss" scoped>
+.scroll-wrapper {
   overflow: hidden;
-  white-space: nowrap;
   height: 100%;
-
-  .scroll-content {
-    display: inline-block;
-  }
 }
 </style>

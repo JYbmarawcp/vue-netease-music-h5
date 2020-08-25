@@ -3,9 +3,14 @@ import VueRouter from 'vue-router'
 
 const Recommend = () => import('@/page/recommend')
 const Singer = () => import('@/page/singer')
-Vue.use(VueRouter)
+const PlaylistDetail = () => import("@/page/playlist-detail")
 
-  const routes = [
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+   return originalPush.call(this, location).catch(err => err)
+}
+Vue.use(VueRouter)
+const routes = [
   {
     path: '/',
     redirect: '/recommend'
@@ -13,7 +18,13 @@ Vue.use(VueRouter)
   {
     path: '/recommend',
     name: 'Recommend',
-    component: Recommend
+    component: Recommend,
+    children: [
+      {
+        path: 'playlist/:id',
+        component: PlaylistDetail
+      },
+    ]
   },
   {
     path: '/singer',

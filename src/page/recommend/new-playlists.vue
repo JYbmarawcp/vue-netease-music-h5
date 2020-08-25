@@ -1,9 +1,10 @@
 <template>
   <div class="new-playlists">
     <Title>人气歌单推荐</Title>
-    <Scroller
+    <Scrollerx
       class="list-wrap"
       :options="{scrollX: true, scrollY:false}"
+      :horizontal="true"
       v-if="list.length"
     >
       <PlaylistCard
@@ -15,7 +16,7 @@
         :playCount="item.playCount"
         class="list-item"
       />
-    </Scroller>
+    </Scrollerx>
   </div>
 </template>
 

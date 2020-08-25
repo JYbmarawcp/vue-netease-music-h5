@@ -5,8 +5,7 @@
 </template>
 
 <script>
-import { getSinger } from '@/api'
-import { getSong } from '@/api'
+import { getSinger, getVideoRecommend } from '@/api'
 export default {
   data () {
     return {
@@ -15,10 +14,8 @@ export default {
   },
   async created () {
     const { cookie } = await getSinger()
-    const { result } = await getSong(cookie)
-    this.cookie = cookie
-    console.log(cookie);
-    console.log(result);
+    const { datas } = await getVideoRecommend(cookie)
+    console.log(datas);
   },
 }
 </script>
