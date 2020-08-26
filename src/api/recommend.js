@@ -6,5 +6,5 @@ export const getBanner = () => request.get('/banner?type=0')
 export const getPersonalized = params => 
   request.get('/personalized', { params })
 
-// 获取新音乐
+// 获取推荐音乐
 export const getNewSongs = () => request.get('/personalized/newsong')

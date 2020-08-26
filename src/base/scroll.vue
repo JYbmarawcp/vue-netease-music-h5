@@ -1,6 +1,9 @@
 <template>
   <div class="scroll-wrapper" ref="scroll">
-    <div class="scroll-content">
+    <div 
+      class="scroll-content"
+      :style="scrollStyle"
+    >
       <slot></slot>
     </div>
   </div>
@@ -23,6 +26,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    horizontal: {
+      type: Boolean,
+      default: false
+    }
   },
   methods: {
     getScroll() {
@@ -42,6 +49,14 @@ export default {
   },
   beforeDestroy() {
     this.scroll.destroy()
+  },
+  computed: {
+    scrollStyle() {
+      if (!this.horizontal) {
+        return
+      }
+      return { 'display': 'inline-block '}
+    }
   },
   watch: {
     data: {

@@ -1,7 +1,7 @@
 <template>
   <div class="new-playlists">
     <Title>人气歌单推荐</Title>
-    <Scrollerx
+    <Scroll
       class="list-wrap"
       :options="{scrollX: true, scrollY:false}"
       :horizontal="true"
@@ -16,7 +16,7 @@
         :playCount="item.playCount"
         class="list-item"
       />
-    </Scrollerx>
+    </Scroll>
   </div>
 </template>
 
@@ -47,6 +47,7 @@ export default {
   overflow: hidden;
   .list-item {
     display: inline-block;
+    vertical-align: top;
     width: 110px;
   }
 }

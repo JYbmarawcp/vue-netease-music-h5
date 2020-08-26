@@ -22,6 +22,7 @@ const routes = [
     children: [
       {
         path: 'playlist/:id',
+        props: true,
         component: PlaylistDetail
       },
     ]
