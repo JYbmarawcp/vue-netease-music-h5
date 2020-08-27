@@ -1,9 +1,6 @@
 <template>
   <div class='playlist-header' v-if="playlist.id">
-    <div class="fixed">
-      歌单
-    </div>
-    <div class="plhead_bg" :style="getbg"></div>
+    
     <div class="header">
       <div class="img-wrap">
         <img v-lazy="$utils.genImgUrl(playlist.coverImgUrl, 130)" >
@@ -27,7 +24,22 @@
       </div>
     </div>
     <div class="button">
-      评论
+      <div @click="goComment">
+        <Icon
+          type="pinglun" 
+          color="white"
+          :size="18"
+        />
+        <p>{{ $utils.formatNumber(playlist.commentCount) }}</p>
+      </div>
+      <div>
+        <Icon
+          type="share" 
+          color="white"
+          :size="18"
+        />
+        <p>{{ $utils.formatNumber(playlist.shareCount) }}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -55,32 +67,18 @@ export default {
     }
   },
   methods: {
-
+    goComment() {
+      this.$router.push(`/recommend/playlist/${this.playlist.id}/comment`)
+    }
   },
 }
 </script>
 <style lang='scss' scoped>
 .playlist-header {
-  height: 220px;
+  height: 228px;
   position: relative;
   overflow: hidden;
-  background: rgba(0, 0, 0, 0.25);
-  .fixed {
-    position: fixed;
-  }
-  .plhead_bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: 50%;
-    transform: scale(1.5);
-    z-index: -1;
-    filter: blur(19px);
-  }
+  
   .header {
     display: flex;
     padding: 12px;
@@ -145,10 +143,19 @@ export default {
 
       .desc-wrap {
         font-size: $font-size-sm;
-        color: #d4cdcd;
+        color: hsla(0,0%,100%,.7);
         @include text-ellipsis-multi(2)
       }
     }
+  }
+
+  .button {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color: $white;
+    padding: 4px 0;
+    text-align: center;
   }
 }
 </style>

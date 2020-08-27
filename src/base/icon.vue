@@ -43,8 +43,16 @@ export default {
 
 <style lang="scss" scoped>
 .icon-color {
+  // 通过prop传入这几个字段
+  // 可以使用默认的几个颜色
+  &-theme {
+    color: $theme-color;
+  }
   &-white {
     color: $white;
+  }
+  &-shallow {
+    color: var(--font-color-shallow-grey);
   }
 }
 </style>

@@ -5,8 +5,14 @@
         :options="{ slide: {loop: true,threshold: 100} }"
         v-if="banners.length"
       >
-        <div class="slide-item" v-for="banner in banners" :key="banner.scm">
-          <img :src="banner.imageUrl" @load="loadImage" />
+        <div
+          class="slide-item" 
+          v-for="banner in banners" 
+          :key="banner.scm"
+        >
+          <a :href="banner.url">
+            <img :src="banner.imageUrl" @load="loadImage" />            
+          </a>
         </div>
       </Slider>
       <NewPlaylists />
@@ -35,7 +41,7 @@ export default {
   methods: {
     loadImage() {
       this.$refs.scroller.refresh()
-    }
+    },
   },
   components: {
     NewPlaylists,

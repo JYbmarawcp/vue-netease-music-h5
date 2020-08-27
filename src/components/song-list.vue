@@ -20,6 +20,15 @@
           <p class="song-name">{{ song.name }}</p>
           <p class="singer">{{ song.artistsText + ' - ' + song.albumName}}</p>
         </div>
+        <div class="icon-wrap">
+          <Icon
+            v-if="song.mvId"
+            class="mv-icon"
+            type="mv"
+            color="theme"
+            :size="22"
+          />
+        </div>
       </li>
     </ul>
   </div>
@@ -78,7 +87,7 @@ export default {
   .song-item {
     display: flex;
     align-items: center;
-    height: 50px;
+    height: 60px;
 
     .index-wrap {
       text-align: center;
@@ -90,15 +99,23 @@ export default {
 
     .song-content {
       flex: 1;
+      width: 280px;
+
       .song-name {
         padding: 6px 0;
         font-size: $font-size-lg;
+        @include text-ellipsis();
       }
       .singer {
-        @include text-ellipsis();
         font-size: $font-size-sm;
         color: #888;
+        @include text-ellipsis();
       }
+    }
+
+    .icon-wrap {
+      padding: 12px 0;
+      width: 40px;
     }
   }
 }
