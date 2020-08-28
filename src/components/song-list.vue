@@ -3,8 +3,8 @@
     <div class="button-wrap">
       <PlayIcon  />
       <div class="button-name">
-        <span>播放全部</span>
-        <span class="song-count">{{`(共${songs.length}首)`}}</span>
+        <span>全部播放</span>
+        <span class="song-count">{{`(共${songs.length}首)`}}</span>  
       </div>
     </div>
     <ul>
@@ -61,7 +61,7 @@ export default {
 </script>
 <style lang='scss' scoped>
 .song-list {
-  background: $white;
+  background: #f8f8f8;
   border-radius: 20px 20px 0 0;
 
   .button-wrap {
@@ -72,6 +72,8 @@ export default {
     .button-name {
       margin-left: 8px;
       font-weight: bold;
+      font-size: $font-size-lg;
+
       .song-count {
         font-size: $font-size-sm;
         margin-left: 4px;

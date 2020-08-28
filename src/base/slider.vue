@@ -93,6 +93,7 @@ export default {
     },
     _onScrollEnd() {
       this.autoGoNext()
+      this.slide.refresh()
     },
     autoGoNext() {
       if (this.autoPlay) {
@@ -113,7 +114,7 @@ export default {
 
     .slide-banner-scroll {
       min-height: 1px;
-      overflow: hidden;
+      // overflow-x: hidden;
 
       .slide-banner-wrapper {
         white-space: nowrap;

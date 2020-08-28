@@ -1,6 +1,5 @@
 <template>
   <div class='playlist-header' v-if="playlist.id">
-    
     <div class="header">
       <div class="img-wrap">
         <img v-lazy="$utils.genImgUrl(playlist.coverImgUrl, 130)" >
@@ -55,7 +54,7 @@ export default {
   },
   data() {
     return {
-
+      show: false
     };
   },
   created() {
@@ -68,14 +67,15 @@ export default {
   },
   methods: {
     goComment() {
-      this.$router.push(`/recommend/playlist/${this.playlist.id}/comment`)
+      this.show = true
+      this.$emit("show", this.show)
     }
   },
 }
 </script>
 <style lang='scss' scoped>
 .playlist-header {
-  height: 228px;
+  height: 200px;
   position: relative;
   overflow: hidden;
   

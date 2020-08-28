@@ -10,18 +10,18 @@
           color="white" 
         />
         <p class="fixed-title">歌单</p>
-        <Icon class="back" type="pinglun" color="white" />
+        <Icon @click.native="suoqi" class="back" type="pinglun" color="white" />
       </div>
-      <Scroll v-if="songs.length">
-        <DetailHeader :playlist="playlist" />
-        <Slider
-          :options="{ slide: {loop: false,threshold: 100}, bounce: true }"
-          :autoPlay="false"
-          :showDoc="false"
-        >
-          <SongList class="song-list" :songs="songs" />
-          <Comment />
-        </Slider>
+      <Scroll class="scrollHeight" v-if="songs.length" ref="scroller">
+        <DetailHeader :playlist="playlist" @show="showComment" />
+        <SongList class="song-list" :songs="songs" />
+        <Comments
+          class="comment-list"
+          v-show="!show"
+          :id="Number(id)"
+          type="playlist"
+          @load="loadImg"
+        />
       </Scroll>
     </div>
   </transition>
@@ -32,7 +32,7 @@ import { getListDetail, getSongDetail } from "@/api"
 import { createSong } from "@/utils"
 import DetailHeader from "./header"
 import SongList from "@/components/song-list"
-import Comment from "./comment"
+import Comments from "@/components/comments"
 
 const MAX = 500
 export default {
@@ -41,9 +41,20 @@ export default {
     return {
       playlist: {},
       songs: [],
+      show: false
     }
   },
   methods: {
+    suoqi() {
+      this.show = !this.show
+    },
+    loadImg() {
+      this.$refs.scroller.refresh()
+    },
+    showComment() {
+      this.show = !this.show
+      this.$refs.scroller.refresh()
+    },
     async init() {
       const { playlist } = await getListDetail({ id: this.id })
       this.playlist = playlist
@@ -85,7 +96,7 @@ export default {
   components: {
     DetailHeader,
     SongList,
-    Comment
+    Comments,
   }
 }
 </script>
@@ -146,12 +157,25 @@ export default {
     }
   }
 
-  .song-list {
-    display: inline-block;
-    margin-top: -40px;
+  .scrollHeight {
+    height: calc(100% - 40px);
     position: relative;
-    z-index: 2;
-    width: 100%;
+    .song-list {
+      display: inline-block;
+      position: relative;
+      z-index: 2;
+      width: 100%;
+    }
+
+    .comment-list {
+      position: absolute;
+      height: 100%;
+      z-index: 99;
+      width: 100%;
+      top: 0;
+      left: 0;
+    }
   }
+
 }
 </style>

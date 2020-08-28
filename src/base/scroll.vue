@@ -36,7 +36,7 @@ export default {
       return this.scroll
     },
     refresh() {
-      this.scroll.refresh()
+      this.scroll && this.scroll.refresh()
     },
     _registerHooks(hookNames, handler) {
       hookNames.forEach((name) => {
