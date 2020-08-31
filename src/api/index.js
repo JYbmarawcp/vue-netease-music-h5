@@ -4,7 +4,7 @@ export * from './playlist'
 
 export * from './song'
 
-export * from './singer'
+export * from './video'
 
 export * from './comment'
 

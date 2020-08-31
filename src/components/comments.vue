@@ -1,5 +1,5 @@
 <template>
-  <Scroll class="comments-wrap">
+  <div class="comments-wrap">
     <div class="block">
       <p class="title">精彩评论</p>
       <Comment
@@ -17,7 +17,7 @@
         @load="loadImg"
       />
     </div>
-  </Scroll>
+  </div>
 </template>
 
 <script>
@@ -111,10 +111,14 @@ export default {
 
 <style lang="scss" scoped>
 .comments-wrap {
-  height: 500px;
-  
+  height: 100%;
+  position: relative;
+  width: 100%;
 }
 .block {
+  &:nth-child(1) {
+    border-radius: 20px 20px 0 0;
+  }
   background: #f8f8f8;
   overflow: scroll;
   .title {

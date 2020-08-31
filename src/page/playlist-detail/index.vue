@@ -10,14 +10,18 @@
           color="white" 
         />
         <p class="fixed-title">歌单</p>
-        <Icon @click.native="suoqi" class="back" type="pinglun" color="white" />
+        <Icon @click.native="showPlaylist" class="back" type="pinglun" color="white" />
       </div>
       <Scroll class="scrollHeight" v-if="songs.length" ref="scroller">
-        <DetailHeader :playlist="playlist" @show="showComment" />
-        <SongList class="song-list" :songs="songs" />
+        <DetailHeader 
+          :playlist="playlist" 
+          @show="showComment" 
+          @showPlaylist="showPlaylist"
+        />
+        <SongList v-show="!commentShow" class="song-list" :songs="songs" />
         <Comments
           class="comment-list"
-          v-show="!show"
+          v-show="commentShow"
           :id="Number(id)"
           type="playlist"
           @load="loadImg"
@@ -41,19 +45,24 @@ export default {
     return {
       playlist: {},
       songs: [],
-      show: false
+      commentShow: false
     }
   },
   methods: {
-    suoqi() {
-      this.show = !this.show
+    showPlaylist() {
+      this.commentShow = !this.commentShow
+      setTimeout(() => {
+        this.$refs.scroller.refresh()
+      }, 30);
     },
     loadImg() {
       this.$refs.scroller.refresh()
     },
     showComment() {
-      this.show = !this.show
-      this.$refs.scroller.refresh()
+      this.commentShow = !this.commentShow
+      setTimeout(() => {
+        this.$refs.scroller.refresh()
+      }, 30);
     },
     async init() {
       const { playlist } = await getListDetail({ id: this.id })
@@ -166,16 +175,11 @@ export default {
       z-index: 2;
       width: 100%;
     }
-
     .comment-list {
-      position: absolute;
-      height: 100%;
-      z-index: 99;
+      border-radius: 20px 20px 0 0;
+      display: inline-block;
       width: 100%;
-      top: 0;
-      left: 0;
     }
   }
-
 }
 </style>

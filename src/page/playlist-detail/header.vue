@@ -23,13 +23,20 @@
       </div>
     </div>
     <div class="button">
-      <div @click="goComment">
+      <div v-show="!showList" @click="goComment">
         <Icon
-          type="pinglun" 
+          type="pinglun"
           color="white"
           :size="18"
         />
         <p>{{ $utils.formatNumber(playlist.commentCount) }}</p>
+      </div>
+      <div v-show="showList" @click="goPlaylist">
+        <Icon
+          type="gedan"
+          :size="18"
+        />
+        <p>{{ $utils.formatNumber(playlist.trackCount) }}</p>
       </div>
       <div>
         <Icon
@@ -52,13 +59,10 @@ export default {
       default: () => ({})
     }
   },
-  data() {
+  data () {
     return {
-      show: false
-    };
-  },
-  created() {
-
+      showList: false
+    }
   },
   computed: {
     getbg() {
@@ -67,8 +71,12 @@ export default {
   },
   methods: {
     goComment() {
-      this.show = true
-      this.$emit("show", this.show)
+      this.$emit("show")
+      this.showList = !this.showList
+    },
+    goPlaylist() {
+      this.$emit("showPlaylist")
+      this.showList = !this.showList
     }
   },
 }
