@@ -6,6 +6,9 @@
         <Icon type="play" />
         {{ $utils.formatNumber(playCount) }}
       </div>
+      <div class="updateFrequency" v-if="updateFrequency">
+        {{ updateFrequency }}
+      </div>
     </div>
     <div class="name">{{ name }}</div>
   </div>
@@ -13,7 +16,7 @@
 
 <script>
 export default {
-  props: ["id", "img", "name", "playCount"],
+  props: ["id", "img", "name", "playCount", "updateFrequency"],
   methods: {
     onClickCard() {
       this.$router.push(`/recommend/playlist/${this.id}`)
@@ -28,6 +31,8 @@ export default {
   margin: 4px;
 
   .img-wrap {
+    
+    
     position: relative;
     width: 100%;
     padding-top: 100%;
@@ -57,6 +62,14 @@ export default {
       i {
         display: inline-block;
       }
+    }
+
+    .updateFrequency {
+      position: absolute;
+      bottom: 4px;
+      left: 4px;
+      color: $white;
+      font-size: $font-size-sm;
     }
   }
 

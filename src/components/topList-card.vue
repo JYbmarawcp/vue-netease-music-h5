@@ -45,7 +45,7 @@ export default {
 <style lang="scss" scoped>
 .topList-card {
   width: 100%;
-  padding: 0 10px;
+  padding: 0 14px 4px;
   display: flex;
   .img-wrap {
     position: relative;
@@ -65,6 +65,8 @@ export default {
   }
 
   .list-content {
+    flex: 1;
+    padding-left: 12px;
     display: flex;
     flex-direction: column;
     justify-content: center;

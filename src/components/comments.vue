@@ -1,6 +1,6 @@
 <template>
   <div class="comments-wrap">
-    <div class="block">
+    <div class="block" v-if="hotComments.length">
       <p class="title">精彩评论</p>
       <Comment
         :comment="comment"

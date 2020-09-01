@@ -10,7 +10,12 @@
           color="white" 
         />
         <p class="fixed-title">歌单</p>
-        <Icon @click.native="showPlaylist" class="back" type="pinglun" color="white" />
+        <Icon 
+          @click.native="showPlaylist" 
+          class="back" 
+          type="pinglun" 
+          color="white" 
+        />
       </div>
       <Scroll class="scrollHeight" v-if="songs.length" ref="scroller">
         <DetailHeader 
@@ -18,7 +23,11 @@
           @show="showComment" 
           @showPlaylist="showPlaylist"
         />
-        <SongList v-show="!commentShow" class="song-list" :songs="songs" />
+        <SongList 
+          v-show="!commentShow" 
+          class="song-list" 
+          :songs="songs" 
+        />
         <Comments
           class="comment-list"
           v-show="commentShow"

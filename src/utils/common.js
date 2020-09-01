@@ -1,5 +1,16 @@
 import { RegExp } from "core-js"
 
+
+export function debounce(fn, wait) {
+  let timer
+  return function() {
+    let context = this
+    let args = arguments
+    if (timer) clearTimeout(timer)
+    timer = setTimeout(fn.apply(context, args), wait)
+  }
+}
+
 export function genImgUrl (url, w, h) {
   if (!h) {
     h = w
@@ -41,5 +52,5 @@ function padLeftZero(str) {
 
 export function formatNumber(number) {
   number = Number(number) || 0
-  return number > 100000 ? `${Math.round(number / 10000)}万` : number
+  return number > 100000000 ? `${Math.floor(number / 100000000 * 10) / 10}亿` : number > 100000 ? `${Math.round(number / 10000)}万` : number
 }

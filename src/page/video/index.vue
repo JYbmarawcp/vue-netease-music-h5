@@ -1,8 +1,17 @@
 <template>
-  <div class="video">
+  <div class="video-wrap">
     <Scroll v-if="videos" ref="videoscroll">
-      <div class="player" v-for="(item, index) in videos" :key="index">
-        <VideoPlayer :url="item.data.urlInfo.url" ref="video" @videoready="ready" />
+      <div 
+        class="player" 
+        v-for="(item, index) in videos" 
+        :key="index"
+      >
+        <VideoPlayer
+          class="video"
+          :url="item.data.urlInfo.url" 
+          ref="video" 
+          @videoready="ready" 
+        />
         <p class="title">{{item.data.title}}</p>
         <div class="desc-wrap">
           <div class="author-wrap">
@@ -49,17 +58,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.video {
+.video-wrap {
   height: calc(100vh - 84px);
   position: relative;
   background: #eeeff0;
 
   .player {
     margin: 10px 0;
-    padding: 0 8px;
+    padding: 8px 8px 0;
     overflow: hidden;
     border-radius: 4px;
     background: $white;
+
+    .video {
+      border-radius: 6px;
+    }
 
     .title {
       width: 100%;
