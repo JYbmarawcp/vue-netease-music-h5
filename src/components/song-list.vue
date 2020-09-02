@@ -13,16 +13,18 @@
         :key="song.id"
         class="song-item"
       >
-        <div class="index-wrap">
+        <div class="index-wrap" v-if="orderShow">
           <span v-text="index + 1"></span>
         </div>
         <div class="song-content">
           <p class="song-name">{{ song.name }}</p>
           <p class="singer">{{ song.artistsText + ' - ' + song.albumName}}</p>
         </div>
-        <div class="icon-wrap">
+        <div 
+          class="icon-wrap" 
+          v-if="song.mvId"
+        >
           <Icon
-            v-if="song.mvId"
             class="mv-icon"
             type="mv"
             color="theme"
@@ -42,6 +44,10 @@ export default {
       type: Array,
       default: () => []
     },
+    orderShow: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {

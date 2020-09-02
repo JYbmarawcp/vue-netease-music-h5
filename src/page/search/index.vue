@@ -15,31 +15,54 @@
         />
       </div>
     </form>
-    <Scroll v-if="searchHots.length">
-      <div class="history" v-if="searchHistorys.length">
+    <Scroll
+      v-if="searchHots.length"
+      ref="searchroll"
+    >
+      <div 
+        class="suggest-wrap"
+        v-if="suggestShow"
+      >
+        <ul>
+          <li
+            @click="onClickSuggest(item.keyword)"
+            v-for="(item, index) in suggest"
+            :key="index"
+            class="recomitem">
+            <Icon type="search" color="shallow" class="u-sech" />
+            <span>{{ item.keyword }}</span>
+          </li>
+        </ul>
+      </div>
+      <div v-else>
+        <div class="history" v-if="searchHistorys.length">
 
-      </div>
-      <p class="title">热搜榜</p>
-      <div class="hotkey-wrap">
-        <HotSearch 
-          v-for="(hot, index) in searchHots"
-          :key="hot.hot"
-          :order="index+1"
-          :name="hot.searchWord"
-          :icon="hot.iconUrl"
-          :desc="hot.content"
-        />
-      </div>
-      <div class="suggest-wrap">
-        
+        </div>
+        <p class="title">热搜榜</p>
+        <div class="hotkey-wrap">
+          <HotSearch
+            @click.native="onClickHot(hot.searchWord)"
+            v-for="(hot, index) in searchHots"
+            :key="hot.hot"
+            :order="index+1"
+            :name="hot.searchWord"
+            :icon="hot.iconUrl"
+            :desc="hot.content"
+          />
+        </div>
       </div>
     </Scroll>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
 import storage from "good-storage"
-import { getSearchHot, getSearchDefault, getSearchSuggest } from "@/api"
+import { 
+  getSearchHot, 
+  getSearchDefault, 
+  getSearchSuggest
+} from "@/api"
 import { debounce } from "@/utils"
 import HotSearch from "@/components/hot-search"
 
@@ -67,13 +90,26 @@ export default {
     onInput: debounce(function(value) {
       if (!value.trim()) return
       getSearchSuggest(value).then(({result}) => {
-        this.suggest = result
+        this.suggest = result.allMatch
       })
     }, 500),
     onEnterPress() {
       if (this.searchKeyword) {
-        this.$router.push('/')
+        this.$router.push(`/search/${this.searchKeyword}`)
       }
+    },
+    onClickSuggest(suggest) {
+      if (suggest) {
+        this.$router.push(`/search/${suggest}`)
+      }
+    },
+    onClickHot(searchWord) {
+      this.$router.push(`/search/${searchWord}`)
+    }
+  },
+  computed: {
+    suggestShow() {
+      return this.searchKeyword && this.suggest.length
     }
   },
   components: {
@@ -120,6 +156,29 @@ export default {
       }
     }
   }
+
+  .suggest-wrap {
+    margin: 0 auto;
+
+    .recomitem {
+      display: flex;
+      align-items: center;
+      height: 45px;
+      padding-left: 10px;
+
+      i {
+        padding-right: 7px;
+      }
+      span {
+        flex: 1;
+        padding-right: 10px;
+        line-height: 45px;
+        color: #333;
+        border-bottom: 1px solid rgba(0, 0, 0, .1);
+      }
+    }
+  }
+
   .title {
     font-size: $font-size;
     font-weight: $font-weight-bold;

@@ -4,8 +4,9 @@ import VueRouter from 'vue-router'
 const Recommend = () => import('@/page/recommend')
 const Video = () => import('@/page/video')
 const PlaylistDetail = () => import("@/page/playlist-detail")
-const Search = () => import("@/page/search")
 const Rank = () => import("@/page/rank")
+const Search = () => import("@/page/search")
+const SearchDetail = () => import("@/page/search-detail")
 
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
@@ -42,7 +43,14 @@ const routes = [
   {
     path: '/search',
     name: 'Search',
-    component: Search
+    component: Search,
+    children: [
+      {
+        path: ':keywords',
+        props: true,
+        component: SearchDetail
+      }
+    ]
   },
 ]
 
