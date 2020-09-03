@@ -24,13 +24,15 @@ import Slide from '@better-scroll/slide'
 
 BScroll.use(Slide)
 const defaultOptions = {
-  scrollX: true,
-  scrollY: false,
-  useTransition: true,
-  momentum: false,
-  bounce: false,
-  stopPropagation: true,
-  probeType: 2
+    scrollX: true,
+    scrollY: false,
+    eventPassthrough: 'vertical',
+    slide: {
+      threshold: 100
+    },
+    momentum: false,
+    bounce: false,
+    stopPropagation: true
 }
 export default {
   name: "Slider",
@@ -59,12 +61,11 @@ export default {
     this.init()
   },
   beforeDestroy() {
-    clearTimeout(this.playTimer)
     this.slide.destroy()
   },
   methods: {
     init() {
-      // console.log(this.option);
+      console.log(Object.assign({}, defaultOptions, this.options));
       clearTimeout(this.playTimer)
       this.slide = new BScroll(
         this.$refs.slide, 
@@ -100,7 +101,7 @@ export default {
         clearTimeout(this.playTimer)
         this.playTimer = setTimeout(() => {
           this.nextPage()
-        }, 4000)
+        }, 3000)
       }
     },
   }
