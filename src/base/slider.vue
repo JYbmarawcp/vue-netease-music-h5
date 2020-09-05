@@ -65,10 +65,9 @@ export default {
   },
   methods: {
     init() {
-      console.log(Object.assign({}, defaultOptions, this.options));
       clearTimeout(this.playTimer)
       this.slide = new BScroll(
-        this.$refs.slide, 
+        this.$refs.slide,
         Object.assign({}, defaultOptions, this.options)
       )
       this.slide.on('scrollEnd', this._onScrollEnd)
