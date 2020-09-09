@@ -2,7 +2,7 @@
   <div class="new-songs" v-if="list.length">
     <Title>最新音乐</Title>
     <Slider v-if="list.length"
-      :options="{ slide: {loop: false,threshold: 100}, bounce: true }"
+      :options="{ slide: {loop: false,threshold: 100}, bounce: true, click: true }"
       :autoPlay="false"
       :showDoc="false"
     >
@@ -28,6 +28,7 @@
 import { getNewSongs } from "@/api"
 import { createSong } from "@/utils"
 import SongCard from "@/components/song-card"
+import { mapActions } from "@/store/helper/music"
 
 export default {
   async created () {
@@ -46,11 +47,16 @@ export default {
         this.list.slice(3, 6),
         this.list.slice(6, 9)
       ]
+    },
+    normalizedSongs() {
+      return this.list.map(song => this.nomalizeSong(song))
     }
   },
   methods: {
     onClickSong(listIndex, index) {
-      console.log(listIndex*3 + index);
+      const nomalizeSongIndex = listIndex * 3 + index
+      const nomalizeSong = this.normalizedSongs[nomalizeSongIndex]
+      this.startSong(nomalizeSong)
     },
     onLoad() {
       this.$emit('loadImage')
@@ -74,7 +80,8 @@ export default {
         duration,
         mvId: mvid
       })
-    }
+    },
+    ...mapActions(["startSong"]),
   },
   components: {
     SongCard

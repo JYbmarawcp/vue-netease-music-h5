@@ -110,6 +110,7 @@ export default {
 <style lang="scss" scoped>
 .slide-banner {
   .banner-wrapper {
+    touch-action: pan-y;
     position: relative;
 
     .slide-banner-scroll {

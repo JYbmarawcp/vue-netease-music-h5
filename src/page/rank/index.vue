@@ -61,8 +61,8 @@ export default {
     const { list } = await getToplist()
     this.topLists = list.filter((item) => item.ToplistType)
     this.myLists = [].concat(list[7], list[9], list[17])
-    this.worldLists = [].concat(list.slice(14, 17), list.slice(18, 20), list[24])
-    this.moreLists = [].concat(list.slice(25))
+    this.worldLists = [].concat(list.slice(14, 17), list[19], list[24], list[25])
+    this.moreLists = [].concat(list.slice(26))
   },
   data () {
     return {
