@@ -24,6 +24,9 @@
         v-if="suggestShow"
       >
         <ul>
+          <li class="recomitem">
+            <span class="keyword">{{ "搜索“" + searchKeyword + "”"}}</span>
+          </li>
           <li
             @click="onClickSuggest(item.keyword)"
             v-for="(item, index) in suggest"
@@ -109,7 +112,7 @@ export default {
   },
   computed: {
     suggestShow() {
-      return this.searchKeyword && this.suggest.length
+      return this.searchKeyword
     }
   },
   components: {
@@ -175,6 +178,9 @@ export default {
         line-height: 45px;
         color: #333;
         border-bottom: 1px solid rgba(0, 0, 0, .1);
+      }
+      .keyword {
+        color: $blue;
       }
     }
   }

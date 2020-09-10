@@ -8,7 +8,8 @@
       </div>
     </div>
     <ul>
-      <li 
+      <li
+        @click="onRowClick(song)"
         v-for="(song, index) in songs"
         :key="song.id"
         class="song-item"
@@ -37,6 +38,7 @@
 </template>
 
 <script>
+import { mapActions, mapMutations } from '@/store/helper/music'
 
 export default {
   props: {
@@ -54,14 +56,13 @@ export default {
 
     };
   },
-  created() {
-
-  },
-  mounted() {
-
-  },
   methods: {
-
+    onRowClick(song) {
+      this.startSong(song)
+      this.setPlaylist(this.songs)
+    },
+    ...mapActions(["startSong"]),
+    ...mapMutations(["setPlaylist"])
   },
 }
 </script>

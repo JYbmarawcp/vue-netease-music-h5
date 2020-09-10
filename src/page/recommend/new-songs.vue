@@ -28,7 +28,7 @@
 import { getNewSongs } from "@/api"
 import { createSong } from "@/utils"
 import SongCard from "@/components/song-card"
-import { mapActions } from "@/store/helper/music"
+import { mapActions, mapMutations } from "@/store/helper/music"
 
 export default {
   async created () {
@@ -57,6 +57,7 @@ export default {
       const nomalizeSongIndex = listIndex * 3 + index
       const nomalizeSong = this.normalizedSongs[nomalizeSongIndex]
       this.startSong(nomalizeSong)
+      this.setPlaylist(this.normalizedSongs)
     },
     onLoad() {
       this.$emit('loadImage')
@@ -82,6 +83,7 @@ export default {
       })
     },
     ...mapActions(["startSong"]),
+    ...mapMutations(["setPlaylist"])
   },
   components: {
     SongCard

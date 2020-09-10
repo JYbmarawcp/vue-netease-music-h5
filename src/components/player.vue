@@ -74,7 +74,8 @@
               :size="20"
               class="icon"
             />
-            <Icon 
+            <Icon
+              @click.native="togglePlaylistShow"
               type="playlist"
               :size="24"
               class="icon"
@@ -83,7 +84,7 @@
         </div>
       </div>
     </transition>
-
+    <NowPlaylist />
     <audio
       ref="audio"
       :src="currentSong.url"
@@ -100,8 +101,10 @@ import { playModeMap } from "@/utils"
 import {
   mapState,
   mapGetters,
+  mapActions,
   mapMutations,
 } from '@/store/helper/music'
+import NowPlaylist from "@/components/now-playlist"
 
 export default {
   data () {
@@ -171,12 +174,17 @@ export default {
       const nextMode = playModeMap[nextModeKey]
       this.setPlayMode(nextMode.code)
     },
+    togglePlaylistShow() {
+      this.setPlaylistShow(!this.isPlaylistShow)
+    },
     ...mapMutations([
       "setPlayerShow",
       "setPlayMode",
       "setPlayingState",
       "setCurrentTime",
-    ])
+      "setPlaylistShow",
+    ]),
+    ...mapActions(["startSong"])
   },
   computed: {
     cdCls() {
@@ -205,6 +213,7 @@ export default {
       'playing',
       'playMode',
       'isPlayerShow',
+      "isPlaylistShow"
     ]),
     ...mapGetters(['hasCurrentSong', 'prevSong', 'nextSong'])
   },
@@ -230,6 +239,9 @@ export default {
         newPlaying ? this.play() : this.pause()
       })
     }
+  },
+  components: {
+    NowPlaylist
   }
 }
 </script>
