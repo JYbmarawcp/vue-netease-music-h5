@@ -1,7 +1,7 @@
 export const playModeMap = {
   sequence: {
     code: 'sequence',
-    icon: 'sequence',
+    icon: 'xunhuan',
     name: '顺序播放'
   },
   loop: {

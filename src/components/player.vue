@@ -36,38 +36,67 @@
             <span class="dot" :class="{'active': currentShow === 'lyric'}"></span>
           </div>
           <div class="progress-wrapper">
-            <span class="time time-l">{{currentTime}}</span>
+            <span class="time time-l">
+              {{ $utils.formatTime(currentTime) }}
+            </span>
             <div class="progress-bar-wrapper">
-
+              <ProgressBar
+                :percent="playedPercent"
+                @percentChange="onProgressBarChange"
+              />
             </div>
-            <span class="time time-r">{{duration}}</span>
+            <span class="time time-r">
+              {{ $utils.formatTime(currentSong.durationSecond) }}
+            </span>
           </div>
           <div class="operators">
-            <Icon 
+            <Icon
+              @click.native="onChangePlayMode"
               :type="modeIcon"
-              class="mode-icon"
+              :size="24"
+              class="icon mode-icon"
             />
-            <Icon 
-              type="prev"
+            <Icon
+              @click.native="prev"
+              type="shangyishoushangyige"
+              :size="20"
+              class="icon"
+            />
+            <Icon
+              @click.native="togglePlaying"
+              :type="playIcon"
+              :size="40"
+              class="icon"
+            />
+            <Icon
+              @click.native="next"
+              type="xiayigexiayishou"
+              :size="20"
               class="icon"
             />
             <Icon 
-              type="play"
-            />
-            <Icon 
-              type="next"
-            />
-            <Icon 
               type="playlist"
+              :size="24"
+              class="icon"
             />
           </div>
         </div>
       </div>
     </transition>
+
+    <audio
+      ref="audio"
+      :src="currentSong.url"
+      @canplay="ready"
+      @ended="end"
+      @timeupdate="updateTime"
+      @error="urlError"
+    ></audio>
   </div>
 </template>
 
 <script>
+import { playModeMap } from "@/utils"
 import {
   mapState,
   mapGetters,
@@ -77,21 +106,130 @@ import {
 export default {
   data () {
     return {
-      
+      songReady: false,
+      currentShow: 'cd',
     }
   },
   methods: {
     back() {
       this.setPlayerShow(false)
     },
-    ...mapMutations(["setPlayerShow"])
+    togglePlaying() {
+      if (!this.hasCurrentSong) {
+        return
+      }
+      this.setPlayingState(!this.playing)
+    },
+    async play() {
+      if (this.songReady) {
+        try {
+          await this.audio.play()
+        } catch (error) {
+          this.setPlayingState(false)
+        }
+      }
+    },
+    pause() {
+      this.audio.pause()
+    },
+    prev() {
+      if (this.songReady) {
+        this.startSong(this.prevSong)
+      }
+    },
+    next() {
+      if (this.songReady) {
+        this.startSong(this.nextSong)
+      }
+    },
+    ready() {
+      this.songReady = true
+    },
+    end() {
+      this.next()
+    },
+    urlError() {
+      this.startSong(this.nextSong)
+    },
+    updateTime(e) {
+      const time = e.target.currentTime
+      this.setCurrentTime(time)
+    },
+    onProgressBarChange(percent) {
+      const currentTime = this.currentSong.durationSecond * percent
+      this.audio.currentTime = currentTime
+      this.setPlayingState(true)
+    },
+    onChangePlayMode() {
+      // 返回可枚举属性的数组
+      const modeKeys = Object.keys(playModeMap)
+      const currentModeIndex = modeKeys.findIndex(
+        (key) => playModeMap[key].code === this.playMode
+      )
+      const nextIndex = (currentModeIndex + 1) % modeKeys.length
+      const nextModeKey = modeKeys[nextIndex]
+      const nextMode = playModeMap[nextModeKey]
+      this.setPlayMode(nextMode.code)
+    },
+    ...mapMutations([
+      "setPlayerShow",
+      "setPlayMode",
+      "setPlayingState",
+      "setCurrentTime",
+    ])
   },
   computed: {
+    cdCls() {
+      return this.playing ? 'play' : 'play pause'
+    },
+    currentMode() {
+      return playModeMap[this.playMode]
+    },
     modeIcon() {
       return this.currentMode.icon
     },
-    ...mapState(['currentSong', 'currentTime', 'playing', 'isPlayerShow']),
-    ...mapGetters(['hasCurrentSong'])
+    playIcon() {
+      return this.playing ? 'zanting' : 'playing'
+    },
+    audio() {
+      return this.$refs.audio
+    },
+    // 播放进度百分比
+    playedPercent() {
+      const { durationSecond } = this.currentSong
+      return Math.min(this.currentTime / durationSecond, 1) || 0
+    },
+    ...mapState([
+      'currentSong', 
+      'currentTime', 
+      'playing',
+      'playMode',
+      'isPlayerShow',
+    ]),
+    ...mapGetters(['hasCurrentSong', 'prevSong', 'nextSong'])
+  },
+  watch: {
+    currentSong(newSong, oldSong) {
+      // 单曲循环
+      if (oldSong && newSong.id === oldSong.id) {
+        this.setCurrentTime(0)
+        this.audio.currentTime = 0
+        this.play()
+        return
+      }
+      this.songReady = false
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
+      this.timer = setTimeout(() => {
+        this.play()
+      }, 1000);
+    },
+    playing(newPlaying) {
+      this.$nextTick(() => {
+        newPlaying ? this.play() : this.pause()
+      })
+    }
   }
 }
 </script>
@@ -208,6 +346,64 @@ export default {
               border-radius: 50%;
             }
           }
+        }
+      }
+    }
+
+    .bottom {
+      position: absolute;
+      bottom: 60px;
+      width: 100%;
+      .dot-wrapper {
+        text-align: center;
+        font-size: 0;
+        .dot {
+          display: inline-block;
+          vertical-align: middle;
+          margin: 0 4px;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: $color-text-l;
+          &.active {
+            width: 20px;
+            border-radius: 5px;
+            background: $color-text-ll;
+          }
+        }
+      }
+
+      .progress-wrapper {
+        display: flex;
+        align-items: center;
+        width: 90%;
+        margin: 0 auto;
+        padding: 10px 0;
+        .time {
+          color: $white;
+          font-size: $font-size-sm;
+          flex: 0 0 40px;
+          width: 40px;
+          line-height: 30px;
+          &.time-l {
+            text-align: left;
+          }
+          &.time-r {
+            text-align: right;
+          }
+        }
+        .progress-bar-wrapper {
+          flex: 1;
+        }
+      }
+
+      .operators {
+        display: flex;
+        align-items: center;
+        .icon {
+          flex: 1;
+          color: $white;
+          text-align: center;
         }
       }
     }

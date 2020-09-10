@@ -63,6 +63,14 @@ function padLeftZero(str) {
   return ('00' + str).substr(str.length)
 }
 
+
+export function formatTime(interval) {
+  interval = interval | 0
+  const minute = pad(interval / 60 | 0)
+  const second = pad(interval % 60)
+  return `${minute}:${second}`
+}
+
 export function formatNumber(number) {
   number = Number(number) || 0
   return number > 100000000 ? `${Math.floor(number / 100000000 * 10) / 10}亿` : number > 100000 ? `${Math.round(number / 10000)}万` : number
