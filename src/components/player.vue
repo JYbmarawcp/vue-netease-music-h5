@@ -32,30 +32,34 @@
               </div>
             </div>
           </div>
-          <Scroll
-            v-if="!nolyric"
-            :data="lyric"
-            :options="{ probeType: 3 }"
-            class="middle-r"
-            ref="lyricList"
-            @init="onInitScroller"
-          >
-            <div
-              :class="getActiveCls(index)"
-              v-for="(l, index) in lyricWithTranslation"
-              :key="index"
-              ref="lyric"
-              class="lyric-item"
+
+          <div class="scroll-wrap">
+            <Scroll
+              v-if="!nolyric"
+              :data="lyric"
+              :options="{ probeType: 3 }"
+              class="middle-r"
+              ref="lyricList"
+              @init="onInitScroller"
             >
-              <p
-                class="lyric-text"
-                v-for="(content, contentIndex) in l.contents"
-                :key="contentIndex"
+              <div
+                :class="getActiveCls(index)"
+                v-for="(l, index) in lyricWithTranslation"
+                :key="index"
+                ref="lyric"
+                class="lyric-item"
               >
-                {{ content }}
-              </p>
-            </div>
-          </Scroll>
+                <p
+                  class="lyric-text"
+                  v-for="(content, contentIndex) in l.contents"
+                  :key="contentIndex"
+                >
+                  {{ content }}
+                </p>
+              </div>
+            </Scroll>
+          </div>
+          
         </div>
 
         <div class="bottom">
@@ -553,14 +557,18 @@ export default {
         }
       }
 
-      .middle-r {
-        display: inline-block;
-        vertical-align: top;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
+      .scroll-wrap {
         
+        .middle-r {
+          display: inline-block;
+          vertical-align: top;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          
+        }
       }
+      
     }
 
     .bottom {
