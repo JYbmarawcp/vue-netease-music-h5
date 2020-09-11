@@ -60,6 +60,7 @@ export default {
               this.$refs.scroll,
               Object.assign({}, defaultOptions, this.options)
             )
+            this.$emit('init', this.scroll)
             this._registerHooks(['scroll', 'scrollEnd'], ({ y }) => {
               this.$emit('scroll', y)
             })

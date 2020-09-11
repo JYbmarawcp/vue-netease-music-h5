@@ -19,8 +19,12 @@
           <p class="song-name" v-html="currentSong.name"></p>
           <p class="song-singer" v-html="currentSong.artistsText"></p>
         </div>
-        <div class="middle">
-          <div class="middle-l">
+        <div class="middle"
+          @touchstart.prevent="middleTouchStart"
+          @touchmove.prevent="middleTouchMove"
+          @touchend.prevent="middleTouchEnd"
+        >
+          <div class="middle-l" ref="middleL">
             <div class="cd-wrap" ref="cdWrap">
               <div class="cd" :class="cdCls">
                 <img class="play-disc" src="@/assets/play-disc.png" alt="">
@@ -28,6 +32,30 @@
               </div>
             </div>
           </div>
+          <Scroll
+            v-if="!nolyric"
+            :data="lyric"
+            :options="{ probeType: 3 }"
+            class="middle-r"
+            ref="lyricList"
+            @init="onInitScroller"
+          >
+            <div
+              :class="getActiveCls(index)"
+              v-for="(l, index) in lyricWithTranslation"
+              :key="index"
+              ref="lyric"
+              class="lyric-item"
+            >
+              <p
+                class="lyric-text"
+                v-for="(content, contentIndex) in l.contents"
+                :key="contentIndex"
+              >
+                {{ content }}
+              </p>
+            </div>
+          </Scroll>
         </div>
 
         <div class="bottom">
@@ -97,7 +125,9 @@
 </template>
 
 <script>
-import { playModeMap } from "@/utils"
+import { getLyric } from "@/api"
+import { isDef, playModeMap, prefixStyle } from "@/utils"
+import lyricParser from "@/utils/lrcparse"
 import {
   mapState,
   mapGetters,
@@ -106,11 +136,28 @@ import {
 } from '@/store/helper/music'
 import NowPlaylist from "@/components/now-playlist"
 
+const transform = prefixStyle('transform')
+const transitionDuration = prefixStyle('transitionDuration')
+const SCROLL_TYPE = 'scroll'
+// 恢复自动滚动的定时器时间
+const AUTO_SCROLL_RECOVER_TIME = 1000
 export default {
+  created () {
+    this.touch = {}
+    this.lyricScrolling = {
+      [SCROLL_TYPE]: false,
+    }
+    this.lyricTimer = {
+      [SCROLL_TYPE]: null,
+    }
+  },
   data () {
     return {
       songReady: false,
       currentShow: 'cd',
+      lyric: [],
+      tlyric: [],
+      nolyric: false,
     }
   },
   methods: {
@@ -177,6 +224,101 @@ export default {
     togglePlaylistShow() {
       this.setPlaylistShow(!this.isPlaylistShow)
     },
+    middleTouchStart(e) {
+      this.touch.initiated = true
+      const touch = e.touches[0]
+      this.touch.startX = touch.pageX
+      this.touch.startY = touch.pageY
+    },
+    middleTouchMove(e) {
+      if (!this.touch.initiated) {
+        return
+      }
+      const touch = e.touches[0]
+      const deltaX = touch.pageX - this.touch.startX
+      const deltaY = touch.pageY - this.touch.startY
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        return
+      }
+      const left = this.currentShow === 'cd' ? 0 : -window.innerWidth
+      const offsetWidth = Math.min(
+        0, Math.max(-window.innerWidth, left + deltaX)
+      )
+      this.touch.percent = Math.abs(offsetWidth / window.innerWidth)
+      this.$refs.lyricList.$el.style[transform] = `transform3d(${offsetWidth}px, 0, 0)`
+      this.$refs.lyricList.$el.style[transitionDuration] = 0
+      this.$refs.middleL.style.opacity = 1 - this.touch.percent
+      this.$refs.middleL.style[transitionDuration] = 0
+    },
+    middleTouchEnd() {
+      let offsetWidth
+      let opacity
+      if (this.currentShow === 'cd') {
+        if (this.touch.percent > 0.1) {
+          offsetWidth = -window.innerWidth
+          opacity = 0
+          this.currentShow = 'lyric'
+        } else {
+          offsetWidth = 0
+          opacity = 1
+        }
+      } else {
+        if (this.touch.percent < 0.9) {
+          offsetWidth = 0
+          this.currentShow = 'cd'
+          opacity = 1
+        } else {
+          offsetWidth = -window.innerWidth
+          opacity = 0
+        }
+      }
+      const time = 300
+      this.$refs.lyricList.$el.style[transform] = `transform3d(${offsetWidth}px, 0, 0)`
+      this.$refs.lyricList.$el.style[transitionDuration] = `${time}ms`
+      this.$refs.middleL.style.opacity = opacity
+      this.$refs.middleL.style[transitionDuration] = `${time}ms`
+      this.touch.initiated = false
+    },
+    async updateLyric() {
+      const result = await getLyric(this.currentSong.id)
+      this.nolyric = !isDef(result.lrc) || !result.lrc.lyric
+      if (!this.nolyric) {
+        const { lyric, tlyric } = lyricParser(result)
+        this.lyric = lyric
+        this.tlyric = tlyric
+      }
+    },
+    getActiveCls(index) {
+      return this.activeLyricIndex === index ? 'active' : ''
+    },
+    onInitScroller(scroller) {
+      const onScrollStart = (type) => {
+        this.clearTimer(type)
+        this.lyricScrolling[type]
+      }
+      const onScrollEnd = (type) => {
+        // 滚动结束后两秒 歌词开始自动滚动
+        this.clearTimer(type)
+        this.lyricTimer[type] = setTimeout(() => {
+          this.lyricScrolling[type] = false
+        }, AUTO_SCROLL_RECOVER_TIME)
+      }
+      scroller.on('scrollStart', onScrollStart.bind(null, SCROLL_TYPE))
+      scroller.on('scrollEnd', onScrollEnd.bind(null, SCROLL_TYPE))
+    },
+    clearTimer(type) {
+      this.lyricTimer[type] && clearTimeout(this.lyricTimer[type])
+    },
+    scrollToActiveLyric() {
+      if (this.activeLyricIndex !== -1) {
+        const { lyricList, lyric } =  this.$refs
+        if (lyric && lyric[this.activeLyricIndex]) {
+          lyricList
+            .getScroll()
+            .scrollToElement(lyric[this.activeLyricIndex], 200, 0, true)
+        }
+      }
+    },
     ...mapMutations([
       "setPlayerShow",
       "setPlayMode",
@@ -207,6 +349,46 @@ export default {
       const { durationSecond } = this.currentSong
       return Math.min(this.currentTime / durationSecond, 1) || 0
     },
+    activeLyricIndex() {
+      return this.lyricWithTranslation
+        ? this.lyricWithTranslation.findIndex((l, index) => {
+            const nextLyric = this.lyricWithTranslation[index + 1]
+            return (
+              this.currentTime >= l.time &&
+              (nextLyric ? this.currentTime < nextLyric.time : true)
+            )
+          })
+        : -1
+    },
+    lyricWithTranslation() {
+      let ret = []
+      // 空内容的去除
+      const lyricFiltered = this.lyric.filter(({ content }) => Boolean(content))
+      // content统一转换数组形式
+      if (lyricFiltered.length) {
+        lyricFiltered.forEach((l) => {
+          const { time, content } = l
+          const lyricItem = { time, content, contents: [content] }
+          const sameTimeTLyric = this.tlyric.find(
+            ({ time: tLyricTime }) => tLyricTime === time
+          )
+          if (sameTimeTLyric) {
+            const { content: tLyricContent } = sameTimeTLyric
+            if (content) {
+              lyricItem.contents.push(tLyricContent)
+            }
+          }
+          ret.push(lyricItem)
+        })
+      } else {
+        ret = lyricFiltered.map(({ time, content }) => ({
+          time,
+          content,
+          contents: [content],
+        }))
+      }
+      return ret
+    },
     ...mapState([
       'currentSong', 
       'currentTime', 
@@ -232,7 +414,16 @@ export default {
       }
       this.timer = setTimeout(() => {
         this.play()
-      }, 1000);
+      }, 1000)
+      this.updateLyric()
+    },
+    activeLyricIndex(newIndex, oldIndex) {
+      if (
+        newIndex !== oldIndex &&
+        !this.lyricScrolling[SCROLL_TYPE]
+      ) {
+        this.scrollToActiveLyric()
+      }
     },
     playing(newPlaying) {
       this.$nextTick(() => {
@@ -319,6 +510,7 @@ export default {
 
       .middle-l {
         display: inline-block;
+        vertical-align: top;
         position: relative;
         width: 100%;
         height: 0;
@@ -359,6 +551,15 @@ export default {
             }
           }
         }
+      }
+
+      .middle-r {
+        display: inline-block;
+        vertical-align: top;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        
       }
     }
 
