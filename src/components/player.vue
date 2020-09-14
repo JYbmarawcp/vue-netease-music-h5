@@ -33,13 +33,16 @@
             </div>
           </div>
 
-          <div class="scroll-wrap">
+          <div
+            ref="lyricLists" 
+            class="middle-r"
+          >
             <Scroll
+              ref="lyricContent"
               v-if="!nolyric"
               :data="lyric"
               :options="{ probeType: 3 }"
-              class="middle-r"
-              ref="lyricList"
+              class=""
               @init="onInitScroller"
             >
               <div
@@ -249,8 +252,9 @@ export default {
         0, Math.max(-window.innerWidth, left + deltaX)
       )
       this.touch.percent = Math.abs(offsetWidth / window.innerWidth)
-      this.$refs.lyricList.$el.style[transform] = `transform3d(${offsetWidth}px, 0, 0)`
-      this.$refs.lyricList.$el.style[transitionDuration] = 0
+      this.$refs.lyricLists.style[transform] = `transform3d(${offsetWidth}px, 0, 0)`
+      this.$refs.lyricLists.style[transitionDuration] = 0
+      this.$refs.lyricLists.style.opacity = this.touch.percent
       this.$refs.middleL.style.opacity = 1 - this.touch.percent
       this.$refs.middleL.style[transitionDuration] = 0
     },
@@ -277,8 +281,9 @@ export default {
         }
       }
       const time = 300
-      this.$refs.lyricList.$el.style[transform] = `transform3d(${offsetWidth}px, 0, 0)`
-      this.$refs.lyricList.$el.style[transitionDuration] = `${time}ms`
+      this.$refs.lyricLists.style[transform] = `transform3d(${offsetWidth}px, 0, 0)`
+      this.$refs.lyricLists.style[transitionDuration] = `${time}ms`
+      this.$refs.lyricLists.style.opacity = 1 - opacity
       this.$refs.middleL.style.opacity = opacity
       this.$refs.middleL.style[transitionDuration] = `${time}ms`
       this.touch.initiated = false
@@ -315,9 +320,9 @@ export default {
     },
     scrollToActiveLyric() {
       if (this.activeLyricIndex !== -1) {
-        const { lyricList, lyric } =  this.$refs
+        const { lyricContent, lyric } =  this.$refs
         if (lyric && lyric[this.activeLyricIndex]) {
-          lyricList
+          lyricContent
             .getScroll()
             .scrollToElement(lyric[this.activeLyricIndex], 200, 0, true)
         }
@@ -557,15 +562,38 @@ export default {
         }
       }
 
-      .scroll-wrap {
-        
-        .middle-r {
-          display: inline-block;
-          vertical-align: top;
-          width: 100%;
-          height: 100%;
-          overflow: hidden;
-          
+      .middle-r {
+        opacity: 0;
+        vertical-align: top;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        position: absolute;
+        top: 0;
+        text-align: center;
+        mask-image: linear-gradient(
+          180deg,
+          hsla(0, 0%, 100%, 0) 0,
+          hsla(0, 0%, 100%, 0.8) 15%,
+          #fff 25%,
+          #fff 75%,
+          hsla(0, 0%, 100%, 0.8) 85%,
+          hsla(0, 0%, 100%, 0)
+        );
+
+        .lyric-item {
+          margin-bottom: 16px;
+          font-size: $font-size;
+          color: hsla(0,0%,100%,.6);
+
+          &.active {
+            color: $white;
+            font-weight: $font-weight-bold;
+          }
+
+          .lyric-text {
+            margin-bottom: 8px;
+          }
         }
       }
       
