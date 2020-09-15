@@ -119,6 +119,11 @@
         </div>
       </div>
     </transition>
+    <transition name="mini">
+      <div class="mini-player">
+        
+      </div>
+    </transition>
     <NowPlaylist />
     <audio
       ref="audio"
