@@ -121,7 +121,10 @@
     </transition>
     <transition name="mini">
       <div class="mini-player">
-        
+        <ProgressCircle :radius="radius" :percent="playedPercent">
+          <img :class="cdCls" width="40" height="40" 
+            :src="$utils.genImgUrl(currentSong.img, 40)">
+        </ProgressCircle>
       </div>
     </transition>
     <NowPlaylist />
@@ -165,6 +168,7 @@ export default {
   },
   data () {
     return {
+      radius: 53,
       songReady: false,
       currentShow: 'cd',
       lyric: [],
@@ -401,6 +405,7 @@ export default {
           contents: [content],
         }))
       }
+      ret.unshift({contents: [""]},{contents: [""]},{contents: [""]},{contents: [""]})
       return ret
     },
     ...mapState([
@@ -579,10 +584,10 @@ export default {
         mask-image: linear-gradient(
           180deg,
           hsla(0, 0%, 100%, 0) 0,
-          hsla(0, 0%, 100%, 0.8) 15%,
+          hsla(0, 0%, 100%, 0.9) 14%,
           #fff 25%,
           #fff 75%,
-          hsla(0, 0%, 100%, 0.8) 85%,
+          hsla(0, 0%, 100%, 0.9) 86%,
           hsla(0, 0%, 100%, 0)
         );
 
@@ -597,7 +602,11 @@ export default {
           }
 
           .lyric-text {
+            min-height: 16.8px;
             margin-bottom: 8px;
+            white-space: normal;
+            width: 80%;
+            margin: 0 auto;
           }
         }
       }
@@ -678,6 +687,30 @@ export default {
       .bottom {
         transform: translate3d(0, 100px, 0);
       }
+    }
+  }
+
+  .mini-player {
+    display: flex;
+    position: fixed;
+    z-index: 99;
+    img {
+      border-radius: 50%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      &.play {
+        animation: rotate 20s linear infinite;
+      }
+      &.pause {
+        animation-play-state: paused;
+      }
+    }
+    &.mini-enter-active, &.mini-leave-active {
+      transition: all 0.4s
+    }
+    &.mini-enter, &.mini-leave-to {
+      opacity: 0
     }
   }
 }
