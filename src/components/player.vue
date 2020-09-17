@@ -30,6 +30,7 @@
           @touchend.prevent="middleTouchEnd"
         >
           <div class="middle-l" ref="middleL">
+            <img :class="{playing}" class="play-bar" src="@/assets/needle.png">
             <div class="cd-wrap" ref="cdWrap">
               <div class="cd" :class="cdCls">
                 <img class="play-disc" src="@/assets/play-disc.png" alt="">
@@ -185,6 +186,7 @@ export default {
   methods: {
     back() {
       this.setPlayerShow(false)
+      this.setPlaylistShow(false)
     },
     open() {
       this.setPlayerShow(true)
@@ -192,6 +194,7 @@ export default {
         this.$refs.lyricContent.refresh()
       })
     },
+    // 动画播放效果
     enter(el, done) {
       const {x, y, scale} = this._getPosAndScale
       let animation = {
@@ -600,12 +603,29 @@ export default {
         width: 100%;
         height: 0;
         padding-top: 80%;
+        .play-bar {
+          width: 96px;
+          height: 137px;
+          position: absolute;
+          top: -26px;
+          left: 50%;
+          margin-left: -16px;
+          z-index: 99;
+          transform-origin: 12px 0;
+          transform: rotate(-10deg);
+          transition: all 0.3s;
+
+          &.playing {
+            transform: rotate(0deg);
+          }
+        }
         .cd-wrap {
           position: absolute;
           left: 10%;
-          top: 0;
+          top: 50px;
           width: 80%;
           height: 100%;
+
           .cd {
             width: 100%;
             height: 100%;
