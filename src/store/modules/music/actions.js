@@ -13,7 +13,6 @@ export default {
       }
     }
     commit('setCurrentSong', song)
-    commit('setPlayerShow', true)
     commit('setPlayingState', true)
     
   }

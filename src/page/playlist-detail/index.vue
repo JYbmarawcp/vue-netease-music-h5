@@ -5,12 +5,6 @@
       <div class="list-fixed">
         <Icon @click.native="back" class="back" type="back" color="white" />
         <p class="fixed-title">歌单</p>
-        <Icon
-          @click.native="showPlaylist"
-          class="back"
-          type="pinglun"
-          color="white"
-        />
       </div>
       <Scroll
         class="scrollHeight"

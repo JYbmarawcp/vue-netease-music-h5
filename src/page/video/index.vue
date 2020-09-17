@@ -14,7 +14,7 @@
         />
         <p class="title">{{item.data.title}}</p>
         <div class="desc-wrap">
-          <div class="author-wrap">
+          <div class="author-wrap" v-if="item.data.creator">
             <div class="avatar">
               <img v-lazy="$utils.genImgUrl(item.data.creator.avatarUrl, 40)" alt="">
             </div>

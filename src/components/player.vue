@@ -3,7 +3,12 @@
     class="player" 
     v-if="hasCurrentSong"
   >
-    <transition name="normal">
+    <transition name="normal"
+      @enter="enter"
+      @after-enter="afterEnter"
+      @leave="leave"
+      @after-leave="afterLeave"
+    >
       <div class="normal-player" v-show="isPlayerShow">
         <div class="background">
           <img width="100%" height="100%" v-lazy="currentSong.img">
@@ -120,10 +125,10 @@
       </div>
     </transition>
     <transition name="mini">
-      <div class="mini-player">
+      <div class="mini-player" v-show="!isPlayerShow" @click="open">
         <ProgressCircle :radius="radius" :percent="playedPercent">
-          <img :class="cdCls" width="40" height="40" 
-            :src="$utils.genImgUrl(currentSong.img, 40)">
+          <img :class="cdCls" width="26" height="26" 
+            :src="$utils.genImgUrl(currentSong.img, 30)">
         </ProgressCircle>
       </div>
     </transition>
@@ -140,6 +145,7 @@
 </template>
 
 <script>
+import animations from 'create-keyframe-animation'
 import { getLyric } from "@/api"
 import { isDef, playModeMap, prefixStyle } from "@/utils"
 import lyricParser from "@/utils/lrcparse"
@@ -168,7 +174,7 @@ export default {
   },
   data () {
     return {
-      radius: 53,
+      radius: 34,
       songReady: false,
       currentShow: 'cd',
       lyric: [],
@@ -179,6 +185,50 @@ export default {
   methods: {
     back() {
       this.setPlayerShow(false)
+    },
+    open() {
+      this.setPlayerShow(true)
+      this.$nextTick(() => {
+        this.$refs.lyricContent.refresh()
+      })
+    },
+    enter(el, done) {
+      const {x, y, scale} = this._getPosAndScale
+      let animation = {
+        0: {
+          transform: `translate3d(${x}px,${y}px,0) scale(${scale})`
+        },
+        60: {
+          transform: `translate3d(0,0,0) scale(1.1)`
+        },
+        100: {
+          transform: `translate3d(0,0,0) scale(1)`
+        }
+      }
+
+      animations.registerAnimation({
+        name: 'move',
+        animation,
+        presets: {
+          duration: 400,
+          easing: 'linear'
+        }
+      })
+      animations.runAnimation(this.$refs.cdWrap, 'move', done)
+    },
+    afterEnter() {
+      animations.unregisterAnimation('move')
+      this.$refs.cdWrap.style.animation = ''
+    },
+    leave(el, done) {
+      this.$refs.cdWrap.style.transition = 'all 0.4s'
+      const {x, y, scale} = this._getPosAndScale
+      this.$refs.cdWrap.style[transform] = `translate3d(${x}px,${y}px,0) scale(${scale})`
+      this.$refs.cdWrap.addEventListener('transitionend', done)
+    },
+    afterLeave() {
+      this.$refs.cdWrap.style.transition = ''
+      this.$refs.cdWrap.style[transform] = ''
     },
     togglePlaying() {
       if (!this.hasCurrentSong) {
@@ -347,6 +397,21 @@ export default {
     ...mapActions(["startSong"])
   },
   computed: {
+    _getPosAndScale() {
+      const targetWidth = 26
+      const paddingRight = 21
+      const paddingTop = 20
+      const Top = 80
+      const width = window.innerWidth * 0.8
+      const scale = targetWidth / width
+      const x = window.innerWidth / 2 - paddingRight
+      const y = -(width / 2 + Top - paddingTop)
+      return {
+        x,
+        y,
+        scale
+      }
+    },
     cdCls() {
       return this.playing ? 'play' : 'play pause'
     },
@@ -406,6 +471,7 @@ export default {
         }))
       }
       ret.unshift({contents: [""]},{contents: [""]},{contents: [""]},{contents: [""]})
+      ret.push({contents: [""], time: this.currentSong.durationSecond})
       return ret
     },
     ...mapState([
@@ -694,11 +760,13 @@ export default {
     display: flex;
     position: fixed;
     z-index: 99;
+    top: 3px;
+    right: 4px;
     img {
       border-radius: 50%;
       position: absolute;
-      left: 0;
-      top: 0;
+      left: 4px;
+      top: 4px;
       &.play {
         animation: rotate 20s linear infinite;
       }

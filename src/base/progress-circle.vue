@@ -5,7 +5,7 @@
       <circle class="progress-background" r="50" cx="50" cy="50" fill="transparent"/>
       <circle class="progress-bar" r="50" cx="50" cy="50" fill="transparent"
         :stroke-dasharray="dashArray"
-        :stroke-dashpffset="dashOffset"
+        :stroke-dashoffset="dashOffset"
       />
     </svg>
     <slot></slot>
@@ -43,15 +43,15 @@ export default {
 .progress-circle {
   position: relative;
   circle {
-    stroke-width: 8px;
+    stroke-width: 5px;
     transform-origin: center;
     &.progress-background {
       transform: scale(0.9);
-      stroke: #ebecec;
+      stroke:hsla(0,0%,100%,.5);
     }
     &.progress-bar {
       transform: scale(0.9) rotate(-90deg);
-      stroke: $theme-color;
+      stroke: $white;
     }
   }
 }

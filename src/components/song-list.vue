@@ -15,13 +15,18 @@
         class="song-item"
       >
         <div class="index-wrap" v-if="orderShow">
-          <span v-text="index + 1"></span>
+          <Icon v-if="isActiveSong(song.id)"
+            class="horn"
+            type="horn"
+            color="theme"
+          />
+          <span v-else v-text="index + 1"></span>
         </div>
         <div class="song-content">
-          <p class="song-name">{{ song.name }}</p>
+          <p class="song-name" :class="songCls(song.id)">{{ song.name }}</p>
           <p class="singer">{{ song.artistsText + ' - ' + song.albumName}}</p>
         </div>
-        <div 
+        <div
           class="icon-wrap" 
           v-if="song.mvId"
         >
@@ -38,7 +43,7 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from '@/store/helper/music'
+import { mapActions, mapMutations, mapState } from '@/store/helper/music'
 
 export default {
   props: {
@@ -59,11 +64,21 @@ export default {
   methods: {
     onRowClick(song) {
       this.startSong(song)
+      this.setPlayerShow(true)
       this.setPlaylist(this.songs)
     },
+    isActiveSong(id) {
+      return id === this.currentSong.id
+    },
+    songCls(id) {
+      return this.isActiveSong(id) ? 'playing' : ''
+    },
     ...mapActions(["startSong"]),
-    ...mapMutations(["setPlaylist"])
+    ...mapMutations(["setPlaylist", "setPlayerShow"])
   },
+  computed: {
+    ...mapState(["currentSong"])
+  }
 }
 </script>
 <style lang='scss' scoped>
@@ -114,6 +129,9 @@ export default {
         padding: 6px 0;
         font-size: $font-size-lg;
         @include text-ellipsis();
+        &.playing {
+          color: $theme-color;
+        }
       }
       .singer {
         font-size: $font-size-sm;
