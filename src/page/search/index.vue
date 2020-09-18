@@ -24,7 +24,7 @@
         v-if="suggestShow"
       >
         <ul>
-          <li class="recomitem">
+          <li class="recomitem" @click="onEnterPress">
             <span class="keyword">{{ "搜索“" + searchKeyword + "”"}}</span>
           </li>
           <li

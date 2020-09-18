@@ -135,7 +135,7 @@ export default {
     }
     .m-input {
       flex: 1;
-      margin-right: 20px;
+      margin-right: 40px;
       .inputcover {
         position: relative;
         width: 100%;

@@ -1,6 +1,5 @@
 import { RegExp } from "core-js"
 
-
 export function debounce(fn, wait) {
   let timer
   return function() {
@@ -62,7 +61,6 @@ export function formatDate(date, fmt = 'yyyy-MM-dd hh:mm:ss') {
 function padLeftZero(str) {
   return ('00' + str).substr(str.length)
 }
-
 
 export function formatTime(interval) {
   interval = interval | 0
