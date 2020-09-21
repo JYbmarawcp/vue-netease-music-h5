@@ -15,9 +15,6 @@ export default {
   setPlayerShow(state, show) {
     state.isPlayerShow = show
   },
-  setPlaylistShow(state, show) {
-    state.isPlaylistShow = show
-  },
   setPlaylist(state, playlist) {
     state.playlist = playlist
   }

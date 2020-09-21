@@ -133,7 +133,7 @@
         </ProgressCircle>
       </div>
     </transition>
-    <NowPlaylist />
+    <NowPlaylist ref="nowPlaylist" />
     <audio
       ref="audio"
       :src="currentSong.url"
@@ -186,7 +186,6 @@ export default {
   methods: {
     back() {
       this.setPlayerShow(false)
-      this.setPlaylistShow(false)
     },
     open() {
       this.setPlayerShow(true)
@@ -291,7 +290,7 @@ export default {
       this.setPlayMode(nextMode.code)
     },
     togglePlaylistShow() {
-      this.setPlaylistShow(!this.isPlaylistShow)
+      this.$refs.nowPlaylist.show()
     },
     middleTouchStart(e) {
       this.touch.initiated = true
@@ -395,7 +394,6 @@ export default {
       "setPlayMode",
       "setPlayingState",
       "setCurrentTime",
-      "setPlaylistShow",
     ]),
     ...mapActions(["startSong"])
   },
@@ -483,7 +481,6 @@ export default {
       'playing',
       'playMode',
       'isPlayerShow',
-      "isPlaylistShow"
     ]),
     ...mapGetters(['hasCurrentSong', 'prevSong', 'nextSong'])
   },

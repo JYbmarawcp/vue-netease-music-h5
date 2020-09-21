@@ -16,11 +16,12 @@
           </div>
         </div> 
         <ul class="songlist">
-          <Scroll v-if="playlist.length" ref="plScroll">
+          <Scroll ref="plScroll">
             <li
               class="songContent"
               v-for="(song, index) in playlist"
               :key="song.id"
+              ref="songItem"
               @click="selectSong(song)"
             >
               <div
@@ -55,19 +56,26 @@ import { mapState, mapMutations, mapActions } from "@/store/helper/music"
 export default {
   data () {
     return {
-      
+      isPlaylistShow: false
     }
   },
   methods: {
+    show() {
+      this.isPlaylistShow = true
+      setTimeout(() => {
+        this.$refs.plScroll.refresh()
+        this.scrollToCurrent(this.currentSong)
+      }, 20)    
+    },
     clear() {
-      console.log(123)
+      console.log(123);
     },
     selectSong(song) {
       this.startSong(song)
       this.setPlayingState(true)
     },
     close() {
-      this.setPlaylistShow(false)
+      this.isPlaylistShow = false
     },
     isActiveSong(id) {
       return id === this.currentSong.id
@@ -75,20 +83,25 @@ export default {
     songCls(id) {
       return this.isActiveSong(id) ? 'playing' : ''
     },
-    ...mapMutations(["setPlayingState", "setPlaylistShow"]),
+    scrollToCurrent(current) {
+      const index = this.playlist.findIndex((song) => {
+        return current.id === song.id
+      })
+      const { plScroll, songItem } =  this.$refs
+      plScroll.getScroll().scrollToElement(songItem[index], 200, 0, true)
+    },
+    ...mapMutations(["setPlayingState"]),
     ...mapActions(["startSong"])
   },
   computed: {
-    ...mapState(["isPlaylistShow", "playlist", "currentSong"])
+    ...mapState(["playlist", "currentSong"])
   },
   watch: {
-    playlist: {
-      handler() {
-        this.$nextTick(() => {
-          this.$refs.plScroll.refresh()
-        })
-      },
-      immediate: true
+    currentSong(newSong, oldSong) {
+      if (!this.isPlaylistShow || newSong.id === oldSong.id) {
+        return
+      }
+      this.scrollToCurrent(newSong)
     }
   }
 }
@@ -149,7 +162,7 @@ export default {
       }
     }
     .songlist {
-      height: 83%;
+      height: 360px;
       position: relative;
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
       .songContent {

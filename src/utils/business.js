@@ -38,10 +38,10 @@ export async function getSongImg(id, albumId) {
   if (!isDef(albumId)) {
     throw new Error('need albumId')
   }
-  const { song } = await getAlbum(albumId)
+  const { songs } = await getAlbum(albumId)
   const {
     al: { picUrl }
-  } = song.find(({ id: songId }) => songId === id) || {}
+  } = songs.find(({ id: songId }) => songId === id) || {}
   return picUrl
 }
 

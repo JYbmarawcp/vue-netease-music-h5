@@ -54,7 +54,7 @@ export default {
       this.commentShow = !this.commentShow
       setTimeout(() => {
         this.$refs.scroller.refresh()
-      }, 30)
+      }, 20)
     },
     loadImg() {
       this.$refs.scroller.refresh()
@@ -63,7 +63,7 @@ export default {
       this.commentShow = !this.commentShow
       setTimeout(() => {
         this.$refs.scroller.refresh()
-      }, 30)
+      }, 20)
     },
     async init() {
       const { playlist } = await getListDetail({ id: this.id })
