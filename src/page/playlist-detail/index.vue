@@ -176,6 +176,7 @@ export default {
       flex: 1;
       line-height: 40px;
       text-align: center;
+      margin-right: 40px;
     }
   }
 
