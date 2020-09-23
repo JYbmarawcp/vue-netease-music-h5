@@ -12,4 +12,3 @@ export const getVideo = cookie =>
 
 export const getVideoRecommend = cookie =>
   request.get(`/video/timeline/recommend?cookie=${cookie}`)
-
