@@ -2,7 +2,7 @@
   <div class="rank">
     <Scroll v-if="moreLists.length ">
       <Title class="title">官方榜</Title>
-      <ToplistCard 
+      <ToplistCard
         v-for="list in topLists"
         :key="list.id"
         :id="list.id"
@@ -83,7 +83,7 @@ export default {
 .rank {
   height: calc(100vh - 84px);
   position: relative;
-
+  overflow: scroll;
   .title {
     padding-left: 14px;
   }
@@ -97,4 +97,5 @@ export default {
     }
   }
 }
+
 </style>
