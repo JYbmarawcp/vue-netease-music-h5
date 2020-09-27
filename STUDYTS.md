@@ -375,3 +375,69 @@ require(["page"], function(page){
 
 ## Parcel打包ts代码
 yarn add --dev parcel@next
+
+-----------重构axios--------------------------
+## 数组
+let x : [string, number]
+// 越界元素啥都报错
+x[4] = 4
+
+
+## Null和Undefined
+默认情况下null和undefined是所有类型的子类型。 就是说你可以把 null和undefined赋值给number类型的变量。
+注意：我们鼓励尽可能地使用--strictNullChecks
+
+## 类型断言
+### 类型断言有两种形式。 其一是“尖括号”语法：
+let someValue: any = "this is a string";
+let strLength: number = (<string>someValue).length;
+### 另一个为as语法：
+let someValue: any = "this is a string";
+let strLength: number = (someValue as string).length;
+
+## 对象展开
+对象展开还有其它一些意想不到的限制。 首先，它仅包含对象 自身的可枚举属性。 大体上是说当你展开一个对象实例时，你会丢失其方法：
+```
+class C {
+  p = 12;
+  m() {
+  }
+}
+let c = new C();
+let clone = { ...c };
+clone.p; // ok
+clone.m(); // error!
+```
+
+## 接口
+
+### 只读属性
+interface Point {
+    readonly x: number;
+    readonly y: number;
+}
+TypeScript具有ReadonlyArray<T>类型，它与Array<T>相似，只是把所有可变方法去掉了，因此可以确保数组创建后再也不能被修改。
+最简单判断该用readonly还是const的方法是看要把它做为变量使用还是做为一个属性。 做为变量使用的话用 const，若做为属性则使用readonly。、
+
+### 额外的属性检查
+还有最后一种跳过这些检查的方式，这可能会让你感到惊讶，它就是将这个对象赋值给一个另一个变量： 因为 squareOptions不会经过额外属性检查，所以编译器不会报错。
+
+## 函数类型
+interface SearchFunc {
+  (source: string, subString: string): boolean;
+}
+
+class Animal {
+    name: string;
+}
+class Dog extends Animal {
+    breed: string;
+}
+// 错误：使用数值型的字符串索引，有时会得到完全不同的Animal!
+interface NotOkay {
+    [x: number]: Animal;
+    [x: string]: Dog;
+}
+
+## 类类型
+接口描述了类的公共部分，而不是公共和私有两部分。 它不会帮你检查类是否具有某些私有成员。
