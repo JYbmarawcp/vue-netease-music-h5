@@ -31,7 +31,7 @@ const objectArr : Lady[] = [
 type Lady = {name: string,age: number}
 class Madam {
   name: string,
-  age: age
+  age: number
 }
 const objectArr : Madam[] = [
   {name： '刘英', age: 18}, {name: '李智恩', age: 24}
@@ -202,4 +202,176 @@ class Waiter extends Girl{
 }
 
 ## 联合类型和类型保护
+interface Waiter{
+  anjiao: boolean;
+  say: ()=>{};
+}
+interface Teacher{
+  anjiao: boolean;
+  skill: ()=>{};
+}
 
+//                   联合类型👇
+function judgewho(animal: Waiter | Teacher) {
+  if(animal.anjiao) {
+    (animal as Teacher).skill()
+  } else {
+    (animal as Waiter).say()
+  }
+}
+Ⅱ
+function judgewhos(animal : Waiter | Teacher){
+  if('skill' in animal){
+    animal.skill()
+  } else {
+    animal.say()
+  }
+}
+Ⅲ typeof
+Ⅳ instanceof
+class NumberObj{
+  count: Number;
+}
+function addObj(first :object | NumberObj, second : object | NumberObj) {
+  if(first instanceof NUmberObj) {
+    return
+  }
+  return 
+}
+
+
+## enum枚举类型
+究极程序员必会
+enum Status {
+  MESSAGE,
+  SPA,
+  DABAOJIAN,
+}
+function getServe(status : any) {
+  if (status === Status.MESSAGE) {
+    return "message"
+  } else if (status === Status.SPA) {
+    return "spa"
+  }
+}
+enum Status {
+  MESSAGE = 1,
+  SPA,
+  DABAOJIAN,
+}
+Status[1]
+
+## 泛型
+
+### 函数中的泛型
+<名字随便起一般用T>
+
+function join<T, P>(first: T, second: P) {
+  return `${first}${second}`
+}
+// 第一个参数传什么类型第二个参数必须一致
+join<number, string>(1, "23")
+
+#### 泛型中数组的使用 (params: Array<ANY>)
+function myFun<T>(params: T[]){
+  return params
+}
+myFun<string>(["132"])
+
+### 类中的泛型
+class SelectGirl{
+  constructor(private girls: string[] | number[]) {}
+  getGirl(index: number):string | number{
+    return this.girls[index]
+  }
+}
+const selectGirl = new SelectGirl(["IU", "刘永", "小红"])
+// 泛型重构
+class SelectGirl<T> {
+  constructor(private girls: T[]) {}
+  getGirl(index :number) : T {
+    return this.girls[index]
+  }
+}
+const selectGirl = new SelectGirl<number>([1,2,3])
+// 继续磨练
+interface Girl{
+  name: string;
+}
+class SelectGirl<T extends Girl> {
+  constructor(private girls: T[]) {}
+  getGirl(index :number) : string {
+    return this.girls[index].name;
+  }
+}
+const selectGirl = new SelectGirl([
+  {name: "IU"},
+  {name: "IU"},
+  {name: "IU"},
+])
+
+## tsc -init 生成tsconfig.json
+
+## 命名空间(namespace)模块化减少全局污染
+namespace Home {
+  class Header{
+    constructor() {
+      const elem = document.createElement("div")
+      elem.innerText = "IU"
+      doucument.body.appendChild(elem)
+    }
+  }
+
+  class Page{
+    constructor() {
+      new Header()
+    }
+  }
+}
+
+### components.ts
+namespace Components{
+  export class Header {
+    constructor() {
+      const elem = document.createElement("div")
+      elem.innerText = "IU"
+      document.body.appendChild(elem)
+    }
+  }
+}
+
+### page.ts
+namespace Home{
+  export class Page{
+    constructor() {
+      new Components.Header()
+    }
+  }
+}
+
+### 上面两个文件打包编译成一个文件：
+"module": "amd"
+"outFile": "./build/page.js"
+
+### 子命名空间
+namespace Components {
+  export namespace SubComponents{
+    export class Test{}
+  }
+}
+
+## import语法
+import { Header, Content, Footer } from "./components"
+
+export default class Page{
+  constructor() {
+    new Header()
+  }
+}
+
+require(["page"], function(page){
+  new page.default();
+})
+
+## Parcel打包ts代码
+yarn add --dev parcel@next
