@@ -441,3 +441,69 @@ interface NotOkay {
 
 ## 类类型
 接口描述了类的公共部分，而不是公共和私有两部分。 它不会帮你检查类是否具有某些私有成员。
+
+## 函数
+可选参数必须跟在必须参数后面。 
+我们也可以为参数提供一个默认值当用户没有传递这个参数或传递的值是undefined时
+
+
+## 泛型
+interface GenericIdentityFn<T> {
+    (arg: T): T;
+}
+
+function identity<T>(arg: T): T {
+    return arg;
+}
+
+let myIdentity: GenericIdentityFn<number> = identity;
+
+### 除了泛型接口，我们还可以创建泛型类。 
+注意，无法创建泛型枚举和泛型命名空间。
+
+我们在类那节说过，类有两部分：静态部分和实例部分。 
+泛型类指的是实例部分的类型，所以类的静态属性不能使用这个泛型类型。
+
+### 泛型约束
+interface Lengthwise {
+    length: number;
+}
+
+function loggingIdentity<T extends Lengthwise>(arg: T): T {
+    console.log(arg.length);
+    return arg;
+}
+
+## 高级类型
+
+### 交叉类型
+function extend<T, U>(first: T, second: U): T & U {
+  let result = {} as T & U;
+  for (let id in first) {
+    result[id] = first[id] as any
+  }
+  for (let id in second) {
+    if(!result.hasOwnproperty(id)) {
+      result[id] = second[id] as any
+    }
+  }
+  return result
+}
+
+### 联合类型
+||||
+
+### 类型保护
+"typename"必须是 "number"， "string"， "boolean"或 "symbol"
+typeof
+instanceof
+
+
+### 可以为null的类型
+使用了 --strictNullChecks，可选参数会被自动地加上 | undefined:
+
+
+!去除了 null和 undefined：
+
+### 字符串字面量类型
+type Easing = "ease-in" | "ease-out" | "ease-in-out";
