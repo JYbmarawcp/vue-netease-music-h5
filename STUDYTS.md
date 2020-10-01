@@ -31,7 +31,7 @@ const objectArr : Lady[] = [
 type Lady = {name: string,age: number}
 class Madam {
   name: string,
-  age: age
+  age: number
 }
 const objectArr : Madam[] = [
   {name： '刘英', age: 18}, {name: '李智恩', age: 24}
@@ -202,4 +202,308 @@ class Waiter extends Girl{
 }
 
 ## 联合类型和类型保护
+interface Waiter{
+  anjiao: boolean;
+  say: ()=>{};
+}
+interface Teacher{
+  anjiao: boolean;
+  skill: ()=>{};
+}
 
+//                   联合类型👇
+function judgewho(animal: Waiter | Teacher) {
+  if(animal.anjiao) {
+    (animal as Teacher).skill()
+  } else {
+    (animal as Waiter).say()
+  }
+}
+Ⅱ
+function judgewhos(animal : Waiter | Teacher){
+  if('skill' in animal){
+    animal.skill()
+  } else {
+    animal.say()
+  }
+}
+Ⅲ typeof
+Ⅳ instanceof
+class NumberObj{
+  count: Number;
+}
+function addObj(first :object | NumberObj, second : object | NumberObj) {
+  if(first instanceof NUmberObj) {
+    return
+  }
+  return 
+}
+
+
+## enum枚举类型
+究极程序员必会
+enum Status {
+  MESSAGE,
+  SPA,
+  DABAOJIAN,
+}
+function getServe(status : any) {
+  if (status === Status.MESSAGE) {
+    return "message"
+  } else if (status === Status.SPA) {
+    return "spa"
+  }
+}
+enum Status {
+  MESSAGE = 1,
+  SPA,
+  DABAOJIAN,
+}
+Status[1]
+
+## 泛型
+
+### 函数中的泛型
+<名字随便起一般用T>
+
+function join<T, P>(first: T, second: P) {
+  return `${first}${second}`
+}
+// 第一个参数传什么类型第二个参数必须一致
+join<number, string>(1, "23")
+
+#### 泛型中数组的使用 (params: Array<ANY>)
+function myFun<T>(params: T[]){
+  return params
+}
+myFun<string>(["132"])
+
+### 类中的泛型
+class SelectGirl{
+  constructor(private girls: string[] | number[]) {}
+  getGirl(index: number):string | number{
+    return this.girls[index]
+  }
+}
+const selectGirl = new SelectGirl(["IU", "刘永", "小红"])
+// 泛型重构
+class SelectGirl<T> {
+  constructor(private girls: T[]) {}
+  getGirl(index :number) : T {
+    return this.girls[index]
+  }
+}
+const selectGirl = new SelectGirl<number>([1,2,3])
+// 继续磨练
+interface Girl{
+  name: string;
+}
+class SelectGirl<T extends Girl> {
+  constructor(private girls: T[]) {}
+  getGirl(index :number) : string {
+    return this.girls[index].name;
+  }
+}
+const selectGirl = new SelectGirl([
+  {name: "IU"},
+  {name: "IU"},
+  {name: "IU"},
+])
+
+## tsc -init 生成tsconfig.json
+
+## 命名空间(namespace)模块化减少全局污染
+namespace Home {
+  class Header{
+    constructor() {
+      const elem = document.createElement("div")
+      elem.innerText = "IU"
+      doucument.body.appendChild(elem)
+    }
+  }
+
+  class Page{
+    constructor() {
+      new Header()
+    }
+  }
+}
+
+### components.ts
+namespace Components{
+  export class Header {
+    constructor() {
+      const elem = document.createElement("div")
+      elem.innerText = "IU"
+      document.body.appendChild(elem)
+    }
+  }
+}
+
+### page.ts
+namespace Home{
+  export class Page{
+    constructor() {
+      new Components.Header()
+    }
+  }
+}
+
+### 上面两个文件打包编译成一个文件：
+"module": "amd"
+"outFile": "./build/page.js"
+
+### 子命名空间
+namespace Components {
+  export namespace SubComponents{
+    export class Test{}
+  }
+}
+
+## import语法
+import { Header, Content, Footer } from "./components"
+
+export default class Page{
+  constructor() {
+    new Header()
+  }
+}
+
+require(["page"], function(page){
+  new page.default();
+})
+
+## Parcel打包ts代码
+yarn add --dev parcel@next
+
+-----------重构axios--------------------------
+## 数组
+let x : [string, number]
+// 越界元素啥都报错
+x[4] = 4
+
+
+## Null和Undefined
+默认情况下null和undefined是所有类型的子类型。 就是说你可以把 null和undefined赋值给number类型的变量。
+注意：我们鼓励尽可能地使用--strictNullChecks
+
+## 类型断言
+### 类型断言有两种形式。 其一是“尖括号”语法：
+let someValue: any = "this is a string";
+let strLength: number = (<string>someValue).length;
+### 另一个为as语法：
+let someValue: any = "this is a string";
+let strLength: number = (someValue as string).length;
+
+## 对象展开
+对象展开还有其它一些意想不到的限制。 首先，它仅包含对象 自身的可枚举属性。 大体上是说当你展开一个对象实例时，你会丢失其方法：
+```
+class C {
+  p = 12;
+  m() {
+  }
+}
+let c = new C();
+let clone = { ...c };
+clone.p; // ok
+clone.m(); // error!
+```
+
+## 接口
+
+### 只读属性
+interface Point {
+    readonly x: number;
+    readonly y: number;
+}
+TypeScript具有ReadonlyArray<T>类型，它与Array<T>相似，只是把所有可变方法去掉了，因此可以确保数组创建后再也不能被修改。
+最简单判断该用readonly还是const的方法是看要把它做为变量使用还是做为一个属性。 做为变量使用的话用 const，若做为属性则使用readonly。、
+
+### 额外的属性检查
+还有最后一种跳过这些检查的方式，这可能会让你感到惊讶，它就是将这个对象赋值给一个另一个变量： 因为 squareOptions不会经过额外属性检查，所以编译器不会报错。
+
+## 函数类型
+interface SearchFunc {
+  (source: string, subString: string): boolean;
+}
+
+class Animal {
+    name: string;
+}
+class Dog extends Animal {
+    breed: string;
+}
+// 错误：使用数值型的字符串索引，有时会得到完全不同的Animal!
+interface NotOkay {
+    [x: number]: Animal;
+    [x: string]: Dog;
+}
+
+## 类类型
+接口描述了类的公共部分，而不是公共和私有两部分。 它不会帮你检查类是否具有某些私有成员。
+
+## 函数
+可选参数必须跟在必须参数后面。 
+我们也可以为参数提供一个默认值当用户没有传递这个参数或传递的值是undefined时
+
+
+## 泛型
+interface GenericIdentityFn<T> {
+    (arg: T): T;
+}
+
+function identity<T>(arg: T): T {
+    return arg;
+}
+
+let myIdentity: GenericIdentityFn<number> = identity;
+
+### 除了泛型接口，我们还可以创建泛型类。 
+注意，无法创建泛型枚举和泛型命名空间。
+
+我们在类那节说过，类有两部分：静态部分和实例部分。 
+泛型类指的是实例部分的类型，所以类的静态属性不能使用这个泛型类型。
+
+### 泛型约束
+interface Lengthwise {
+    length: number;
+}
+
+function loggingIdentity<T extends Lengthwise>(arg: T): T {
+    console.log(arg.length);
+    return arg;
+}
+
+## 高级类型
+
+### 交叉类型
+function extend<T, U>(first: T, second: U): T & U {
+  let result = {} as T & U;
+  for (let id in first) {
+    result[id] = first[id] as any
+  }
+  for (let id in second) {
+    if(!result.hasOwnproperty(id)) {
+      result[id] = second[id] as any
+    }
+  }
+  return result
+}
+
+### 联合类型
+||||
+
+### 类型保护
+"typename"必须是 "number"， "string"， "boolean"或 "symbol"
+typeof
+instanceof
+
+
+### 可以为null的类型
+使用了 --strictNullChecks，可选参数会被自动地加上 | undefined:
+
+
+!去除了 null和 undefined：
+
+### 字符串字面量类型
+type Easing = "ease-in" | "ease-out" | "ease-in-out";
